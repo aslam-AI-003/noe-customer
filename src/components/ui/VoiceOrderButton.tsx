@@ -11,8 +11,15 @@ interface Message {
   time: string;
 }
 
-export default function VoiceOrderButton() {
+interface VoiceOrderButtonProps {
+  externalOpen?: boolean;
+  onClose?: () => void;
+}
+
+export default function VoiceOrderButton({ externalOpen, onClose }: VoiceOrderButtonProps = {}) {
   const [isOpen, setIsOpen] = useState(false);
+  const actualOpen = externalOpen !== undefined ? externalOpen : isOpen;
+  const handleClose = () => { setIsOpen(false); onClose?.(); };
   const [isRecording, setIsRecording] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
@@ -159,24 +166,17 @@ export default function VoiceOrderButton() {
     }
   };
 
+  // Auto-open when externalOpen is true
+  React.useEffect(() => {
+    if (externalOpen && !isOpen) {
+      openVoiceChat();
+    }
+  }, [externalOpen]);
+
   return (
     <>
-      {/* Floating Voice Button (always visible) */}
-      <div className="fixed bottom-28 right-4 z-[9999] flex flex-col items-center gap-1">
-        <button
-          onClick={openVoiceChat}
-          className="w-16 h-16 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-full shadow-2xl shadow-purple-500/50 flex items-center justify-center hover:scale-110 transition-transform animate-bounce border-4 border-white/30"
-          aria-label="Voice Order"
-        >
-          <Mic size={26} className="text-white" />
-        </button>
-        <span className="text-[10px] font-bold text-purple-600 dark:text-purple-400 bg-white dark:bg-gray-800 px-2 py-0.5 rounded-full shadow-md">
-          🎤 Voice Order
-        </span>
-      </div>
-
       {/* Voice Chat Modal */}
-      {isOpen && (
+      {(isOpen || externalOpen) && (
         <div className="fixed inset-0 z-[100] bg-black/50 backdrop-blur-sm flex items-end sm:items-center justify-center">
           <div className="w-full sm:max-w-md h-[85vh] sm:h-[80vh] bg-gradient-to-b from-indigo-900 to-purple-900 sm:rounded-2xl flex flex-col overflow-hidden shadow-2xl animate-slide-up">
             

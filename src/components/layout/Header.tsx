@@ -2,12 +2,14 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { Bike, ShoppingCart, UserRound, Menu, X, Home, Store, MapPin, Info } from 'lucide-react';
+import { Bike, ShoppingCart, UserRound, Menu, X, Home, Store, MapPin, Info, Mic } from 'lucide-react';
 import { useStore } from '@/store/useStore';
 import AreaSelector from '@/components/ui/AreaSelector';
+import VoiceOrderButton from '@/components/ui/VoiceOrderButton';
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [showVoice, setShowVoice] = useState(false);
   const { cart, language, setLanguage, isAuthenticated } = useStore();
 
   return (
@@ -39,7 +41,17 @@ export default function Header() {
           </nav>
 
           {/* Right Actions */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3">
+            {/* 🎤 Voice Order Button - IN HEADER */}
+            <button
+              onClick={() => setShowVoice(true)}
+              className="relative p-2 rounded-xl bg-gradient-to-br from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 transition-all shadow-md hover:shadow-lg hover:scale-105"
+              title="Voice Order — Speak to order!"
+            >
+              <Mic size={20} className="text-white" />
+              <span className="absolute -top-1 -right-1 w-3 h-3 bg-green-400 rounded-full animate-pulse border border-white" />
+            </button>
+
             {/* Language Toggle */}
             <button
               onClick={() => setLanguage(language === 'ta' ? 'en' : 'ta')}
@@ -93,6 +105,8 @@ export default function Header() {
           </div>
         )}
       </div>
+      {/* Voice Order Modal */}
+      {showVoice && <VoiceOrderButton externalOpen={showVoice} onClose={() => setShowVoice(false)} />}
     </header>
   );
 }
