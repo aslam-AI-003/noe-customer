@@ -15,6 +15,7 @@ import {
   getFavoriteShops,
 } from '@/lib/firebaseService';
 import { isPushSupported, registerServiceWorker, requestNotificationPermission, getNotificationPermission } from '@/lib/pushNotification';
+import VoiceOrderButton from '@/components/ui/VoiceOrderButton';
 
 // Pages that should NOT show bottom nav
 const NO_BOTTOM_NAV = ['/auth/login', '/auth/register'];
@@ -143,6 +144,9 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
     <>
       {children}
       {showBottomNav && <BottomNav />}
+      
+      {/* Voice AI Order Button */}
+      <VoiceOrderButton />
 
       {/* Push Notification Permission Banner */}
       {showNotifBanner && (
