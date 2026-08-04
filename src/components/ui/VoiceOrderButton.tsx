@@ -162,13 +162,18 @@ export default function VoiceOrderButton() {
   return (
     <>
       {/* Floating Voice Button (always visible) */}
-      <button
-        onClick={openVoiceChat}
-        className="fixed bottom-24 right-4 z-50 w-14 h-14 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-full shadow-lg shadow-purple-500/30 flex items-center justify-center hover:scale-110 transition-transform animate-bounce"
-        aria-label="Voice Order"
-      >
-        <Mic size={24} className="text-white" />
-      </button>
+      <div className="fixed bottom-28 right-4 z-[9999] flex flex-col items-center gap-1">
+        <button
+          onClick={openVoiceChat}
+          className="w-16 h-16 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-full shadow-2xl shadow-purple-500/50 flex items-center justify-center hover:scale-110 transition-transform animate-bounce border-4 border-white/30"
+          aria-label="Voice Order"
+        >
+          <Mic size={26} className="text-white" />
+        </button>
+        <span className="text-[10px] font-bold text-purple-600 dark:text-purple-400 bg-white dark:bg-gray-800 px-2 py-0.5 rounded-full shadow-md">
+          🎤 Voice Order
+        </span>
+      </div>
 
       {/* Voice Chat Modal */}
       {isOpen && (
