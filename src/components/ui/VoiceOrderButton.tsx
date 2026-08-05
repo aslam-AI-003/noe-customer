@@ -3,7 +3,7 @@
 import React, { useState, useRef, useCallback } from 'react';
 import { Mic, MicOff, X, Send, Volume2 } from 'lucide-react';
 
-const VOICE_AI_URL = process.env.NEXT_PUBLIC_VOICE_AI_URL || 'http://localhost:4000';
+const VOICE_AI_URL = process.env.NEXT_PUBLIC_VOICE_AI_URL || 'https://nox-voice-ai.onrender.com';
 
 interface Message {
   role: 'ai' | 'user';
@@ -190,7 +190,7 @@ export default function VoiceOrderButton({ externalOpen = false, onClose }: Voic
                   <p className="text-white/60 text-xs">Speak Tamil, English or Tanglish</p>
                 </div>
               </div>
-              <button onClick={() => setIsOpen(false)} className="p-2 hover:bg-white/10 rounded-full transition">
+              <button onClick={() => { setIsOpen(false); onClose?.(); }} className="p-2 hover:bg-white/10 rounded-full transition">
                 <X size={20} className="text-white" />
               </button>
             </div>

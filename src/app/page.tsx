@@ -5,11 +5,12 @@ import Link from 'next/link';
 import Image from 'next/image';
 import {
   Search, MapPin, ChevronDown, Bell, ShoppingCart, Bike, Star, Zap,
-  ChevronRight, Store,
+  ChevronRight, Store, Mic,
 } from 'lucide-react';
 import { useStore } from '@/store/useStore';
 import { SEED_SHOPS, SEED_CATEGORIES, SEED_BANNERS } from '@/lib/seed-data';
 import { ThemeToggle } from '@/components/ui/ThemeToggle';
+import VoiceOrderButton from '@/components/ui/VoiceOrderButton';
 
 const HERO_STATS = [
   { value: '500+', label: 'Shops', icon: Store },
@@ -29,6 +30,7 @@ export default function HomePage() {
   const [activeBanner, setActiveBanner] = useState(0);
   const [mounted, setMounted] = useState(false);
   const [openShopsCount] = useState(SEED_SHOPS.filter(s => s.isOpen).length);
+  const [showVoice, setShowVoice] = useState(false);
   const bannerRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
@@ -67,6 +69,11 @@ export default function HomePage() {
           </button>
 
           <div className="flex items-center gap-2 ml-auto">
+            {/* 🎤 Voice Order */}
+            <button onClick={() => setShowVoice(true)} className="relative p-2 rounded-xl bg-gradient-to-br from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 transition-all shadow-md hover:shadow-lg hover:scale-105" title="Voice Order">
+              <Mic size={16} className="text-white" />
+              <span className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-green-400 rounded-full animate-pulse border border-white" />
+            </button>
             <Link href="/search" className="btn-icon">
               <Search size={16} />
             </Link>
@@ -430,6 +437,9 @@ export default function HomePage() {
           </Link>
         </div>
       )}
+
+      {/* ── VOICE ORDER MODAL ── */}
+      {showVoice && <VoiceOrderButton externalOpen={showVoice} onClose={() => setShowVoice(false)} />}
     </main>
   );
 }
