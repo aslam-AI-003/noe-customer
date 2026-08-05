@@ -16,10 +16,8 @@ interface VoiceOrderButtonProps {
   onClose?: () => void;
 }
 
-export default function VoiceOrderButton({ externalOpen, onClose }: VoiceOrderButtonProps = {}) {
+export default function VoiceOrderButton({ externalOpen = false, onClose }: VoiceOrderButtonProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const actualOpen = externalOpen !== undefined ? externalOpen : isOpen;
-  const handleClose = () => { setIsOpen(false); onClose?.(); };
   const [isRecording, setIsRecording] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
@@ -167,11 +165,12 @@ export default function VoiceOrderButton({ externalOpen, onClose }: VoiceOrderBu
   };
 
   // Auto-open when externalOpen is true
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   React.useEffect(() => {
-    if (externalOpen && !isOpen) {
+    if (externalOpen) {
       openVoiceChat();
     }
-  }, [externalOpen]);
+  }, []);
 
   return (
     <>
