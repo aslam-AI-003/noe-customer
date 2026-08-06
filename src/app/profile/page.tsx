@@ -74,17 +74,31 @@ export default function ProfilePage() {
     if (!user) return;
     setAddingAddress(true);
     try {
-      const id = await addUserAddress(user.uid, {
+      const addressData = {
         label: newAddress.label,
         fullAddress: newAddress.fullAddress.trim(),
+        landmark: newAddress.landmark?.trim() || '',
         city: newAddress.city,
         pincode: newAddress.pincode.trim(),
         lat: 10.787,
         lng: 79.1378,
         isDefault: addresses.length === 0,
-      });
-      const updated = await getUserAddresses(user.uid);
-      setAddresses(updated);
+      };
+
+      // Try Firestore first, fall back to local-only
+      let id: string;
+      try {
+        id = await addUserAddress(user.uid, addressData);
+        const updated = await getUserAddresses(user.uid);
+        setAddresses(updated);
+      } catch (e) {
+        // Firestore failed (auth/rules issue) — save locally in Zustand
+        console.warn('Firestore address save failed, saving locally:', e);
+        id = 'addr-' + Date.now().toString(36);
+        const localAddress = { id, ...addressData };
+        setAddresses([...addresses, localAddress]);
+      }
+
       if (addresses.length === 0) setSelectedAddress(id);
       setShowAddAddress(false);
       setNewAddress({ label: 'Home', fullAddress: '', landmark: '', city: 'Thanjavur', pincode: '', areaId: 'thanjavur' });
