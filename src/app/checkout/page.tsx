@@ -10,6 +10,8 @@ import {
 } from 'lucide-react';
 import { useStore } from '@/store/useStore';
 import { orderService } from '@/lib/firestoreService';
+import { db } from '@/lib/firebase';
+import { doc, updateDoc, increment, getDoc } from 'firebase/firestore';
 import {
   placeOrder,
   deductFromWallet,
@@ -126,9 +128,27 @@ export default function CheckoutPage() {
         ? localStorage.getItem(`noe-vendor-docid-${cartShopId}`) || cartShopId
         : cartShopId || '';
 
+      // Generate readable Order ID: NOE-SHOPNAME-001
+      let orderId = 'NOE-' + Date.now().toString(36).toUpperCase().slice(-6);
+      try {
+        if (db && vendorDocId) {
+          // Get shop short code (first 6 chars of shopName, uppercase, no spaces)
+          const shopCode = shopName.replace(/[^a-zA-Z0-9]/g, '').toUpperCase().slice(0, 6) || 'SHOP';
+          // Increment vendor's order counter atomically
+          const vendorRef = doc(db, 'vendors', vendorDocId);
+          await updateDoc(vendorRef, { orderCounter: increment(1) });
+          const vendorSnap = await getDoc(vendorRef);
+          const counter = vendorSnap.data()?.orderCounter || 1;
+          orderId = `NOE-${shopCode}-${String(counter).padStart(3, '0')}`;
+        }
+      } catch (e) {
+        console.warn('Order ID generation fallback:', e);
+      }
+
       // 1. PRIMARY: Save to Firestore (this is what vendor sees!)
       const firestoreOrderId = await orderService.create({
         userId: user.uid,
+        orderId, // Readable order ID: NOE-TEABOY-001
         shopId: vendorDocId,
         vendorId: vendorDocId, // vendor queries orders by their Firestore doc ID
         shopName: shopName,
@@ -139,6 +159,7 @@ export default function CheckoutPage() {
         totalAmount: total,
         total,
         status: 'new', // vendor expects 'new' status for incoming orders
+        riderStatus: 'pending', // Will change to 'searching' when vendor marks ready
         paymentMethod,
         address: selectedAddress,
         deliveryAddress: selectedAddress?.fullAddress || '',
@@ -148,8 +169,6 @@ export default function CheckoutPage() {
         createdAt: now,
         updatedAt: now,
       } as any);
-
-      const orderId = firestoreOrderId || ('NOE-' + Date.now().toString(36).toUpperCase().slice(-6));
 
       // 2. Also save via firebaseService for notifications (non-blocking)
       placeOrder({
