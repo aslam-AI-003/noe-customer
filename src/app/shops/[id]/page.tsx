@@ -110,10 +110,11 @@ export default function ShopDetailPage() {
         const docId = vendor.id; // Always the Firestore doc.id
         setFirestoreDocId(docId);
         
-        // Save shop name for checkout page
+        // Save shop name AND vendor Firestore doc ID for checkout page
         if (typeof window !== 'undefined') {
           localStorage.setItem(`noe-shop-name-${id}`, vendor.shopName || 'Shop');
           localStorage.setItem(`noe-shop-name-${docId}`, vendor.shopName || 'Shop');
+          localStorage.setItem(`noe-vendor-docid-${id}`, docId); // Maps URL id → Firestore doc ID
         }
         setShop({
           id: vendor.id,

@@ -21,18 +21,22 @@ function safeImageSrc(src?: string): string {
 }
 
 const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string; border: string; icon: React.ElementType }> = {
+  new:        { label: 'Order Placed',   color: 'text-blue-600 dark:text-blue-400',    bg: 'bg-blue-500/10',    border: 'border-blue-500/20',    icon: ClipboardList },
   placed:     { label: 'Order Placed',   color: 'text-blue-600 dark:text-blue-400',    bg: 'bg-blue-500/10',    border: 'border-blue-500/20',    icon: ClipboardList },
+  accepted:   { label: 'Confirmed',      color: 'text-purple-600 dark:text-purple-400',  bg: 'bg-purple-500/10',  border: 'border-purple-500/20',  icon: CheckCircle2 },
   confirmed:  { label: 'Confirmed',      color: 'text-purple-600 dark:text-purple-400',  bg: 'bg-purple-500/10',  border: 'border-purple-500/20',  icon: CheckCircle2 },
   preparing:  { label: 'Preparing',      color: 'text-amber-600 dark:text-amber-400',  bg: 'bg-amber-500/10',  border: 'border-amber-500/20',  icon: ChefHat },
-  ready:      { label: 'Ready',          color: 'text-emerald-600 dark:text-emerald-400', bg: 'bg-emerald-500/10', border: 'border-emerald-500/20', icon: Package },
+  ready:      { label: 'Ready for Pickup', color: 'text-emerald-600 dark:text-emerald-400', bg: 'bg-emerald-500/10', border: 'border-emerald-500/20', icon: Package },
+  picked_up:  { label: 'Picked Up',     color: 'text-indigo-600 dark:text-indigo-400', bg: 'bg-indigo-500/10', border: 'border-indigo-500/20', icon: Bike },
+  on_the_way: { label: 'On the Way',     color: 'text-orange-600 dark:text-orange-400',  bg: 'bg-orange-500/10',  border: 'border-orange-500/20',  icon: Bike },
   in_transit: { label: 'On the Way',     color: 'text-orange-600 dark:text-orange-400',  bg: 'bg-orange-500/10',  border: 'border-orange-500/20',  icon: Bike },
   delivered:  { label: 'Delivered',      color: 'text-emerald-600 dark:text-emerald-400', bg: 'bg-emerald-500/10', border: 'border-emerald-500/20', icon: PartyPopper },
   cancelled:  { label: 'Cancelled',      color: 'text-red-600 dark:text-red-400',     bg: 'bg-red-500/10',     border: 'border-red-500/20',     icon: XCircle },
 };
 
 const TABS = ['All', 'Active', 'Delivered', 'Cancelled'];
-const STEPS = ['placed', 'confirmed', 'preparing', 'in_transit', 'delivered'];
-const STEP_ICONS = [ClipboardList, CheckCircle2, ChefHat, Bike, PartyPopper];
+const STEPS = ['new', 'accepted', 'preparing', 'ready', 'picked_up', 'delivered'];
+const STEP_ICONS = [ClipboardList, CheckCircle2, ChefHat, Package, Bike, PartyPopper];
 
 function SuccessBanner({ onClose }: { onClose: () => void }) {
   const searchParams = useSearchParams();
@@ -164,7 +168,7 @@ export default function OrdersPage() {
   const allOrders: Order[] = firestoreOrders;
 
   const filtered = allOrders.filter(o => {
-    if (activeTab === 'Active') return STEPS.slice(0, 4).includes(o.status);
+    if (activeTab === 'Active') return ['new', 'accepted', 'preparing', 'ready', 'picked_up', 'on_the_way', 'placed', 'confirmed', 'in_transit'].includes(o.status);
     if (activeTab === 'Delivered') return o.status === 'delivered';
     if (activeTab === 'Cancelled') return o.status === 'cancelled';
     return true;

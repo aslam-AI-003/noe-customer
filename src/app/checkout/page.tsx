@@ -121,20 +121,27 @@ export default function CheckoutPage() {
       const shopIcon = '/images/shops/shop-1.jpg';
       const now = new Date().toISOString();
 
+      // Resolve the actual Firestore doc ID for the vendor
+      const vendorDocId = (typeof window !== 'undefined' && cartShopId)
+        ? localStorage.getItem(`noe-vendor-docid-${cartShopId}`) || cartShopId
+        : cartShopId || '';
+
       // 1. PRIMARY: Save to Firestore (this is what vendor sees!)
       const firestoreOrderId = await orderService.create({
         userId: user.uid,
-        shopId: cartShopId || '',
-        vendorId: cartShopId || '', // vendor uses this to query orders
+        shopId: vendorDocId,
+        vendorId: vendorDocId, // vendor queries orders by their Firestore doc ID
         shopName: shopName,
         shopIcon,
         items: cart.map(i => ({ name: i.name, quantity: i.quantity, price: i.discountPrice || i.price })),
         subtotal,
         deliveryCharge,
+        totalAmount: total,
         total,
-        status: 'placed',
+        status: 'new', // vendor expects 'new' status for incoming orders
         paymentMethod,
         address: selectedAddress,
+        deliveryAddress: selectedAddress?.fullAddress || '',
         notes: notes || '',
         customerName: user.displayName || 'Customer',
         customerPhone: user.phone || '9876543210',

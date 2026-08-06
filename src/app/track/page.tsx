@@ -19,8 +19,8 @@ import {
 const LiveMap = dynamic(() => import('@/components/ui/LiveMap'), { ssr: false });
 
 const STATUS_STEPS = [
-  { key: 'placed', label: 'Order Placed', icon: Package, color: 'text-blue-500' },
-  { key: 'confirmed', label: 'Confirmed', icon: CheckCircle2, color: 'text-purple-500' },
+  { key: 'new', label: 'Order Placed', icon: Package, color: 'text-blue-500' },
+  { key: 'accepted', label: 'Confirmed', icon: CheckCircle2, color: 'text-purple-500' },
   { key: 'preparing', label: 'Preparing', icon: Store, color: 'text-orange-500' },
   { key: 'ready', label: 'Ready', icon: Package, color: 'text-amber-500' },
   { key: 'picked_up', label: 'Picked Up', icon: Bike, color: 'text-indigo-500' },
