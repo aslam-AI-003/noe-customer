@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import { useStore } from '@/store/useStore';
 import { rateOrder, cancelOrder, addNotification } from '@/lib/firebaseService';
+import { orderService } from '@/lib/firestoreService';
 import type { Order } from '@/lib/firebaseService';
 import toast from 'react-hot-toast';
 
@@ -122,34 +123,45 @@ export default function OrdersPage() {
   const [ratingOrder, setRatingOrder] = useState<Order | null>(null);
   const [cancelling, setCancelling] = useState<string | null>(null);
   const [mounted, setMounted] = useState(false);
+  const [firestoreOrders, setFirestoreOrders] = useState<Order[]>([]);
 
   useEffect(() => { setMounted(true); }, []);
 
-  // Merge demo orders into the orders list (convert DemoOrder → Order format)
-  const allOrders: Order[] = [
-    ...demoOrders.map(d => ({
-      id: d.id,
-      userId: d.userId,
-      shopId: d.shopId,
-      shopName: d.shopName,
-      shopIcon: d.shopIcon,
-      items: d.items,
-      subtotal: d.subtotal,
-      deliveryCharge: d.deliveryCharge,
-      total: d.total,
-      status: (d.status === 'picked_up' || d.status === 'on_the_way' ? 'in_transit' : d.status) as Order['status'],
-      paymentMethod: d.paymentMethod,
-      address: d.address as any,
-      notes: d.notes,
-      riderId: d.riderId,
-      riderName: d.riderName,
-      rating: d.rating,
-      review: d.review,
-      createdAt: d.createdAt as any,
-      updatedAt: d.updatedAt as any,
-    } as Order)),
-    ...orders,
-  ];
+  // Real-time Firestore order listener
+  useEffect(() => {
+    if (!user?.uid) return;
+    const unsubscribe = orderService.onAll((liveOrders) => {
+      // Filter orders for this user
+      const myOrders: Order[] = liveOrders
+        .filter((o: any) => o.userId === user.uid)
+        .map((d: any) => ({
+          id: d.id,
+          userId: d.userId,
+          shopId: d.shopId,
+          shopName: d.shopName,
+          shopIcon: d.shopIcon || '/images/shops/shop-1.jpg',
+          items: d.items || [],
+          subtotal: d.subtotal || 0,
+          deliveryCharge: d.deliveryCharge || 0,
+          total: d.total || 0,
+          status: (d.status === 'picked_up' || d.status === 'on_the_way' ? 'in_transit' : d.status) as Order['status'],
+          paymentMethod: d.paymentMethod || 'cod',
+          address: d.address || {},
+          notes: d.notes || '',
+          riderId: d.riderId,
+          riderName: d.riderName,
+          rating: d.rating,
+          review: d.review,
+          createdAt: d.createdAt,
+          updatedAt: d.updatedAt,
+        }));
+      setFirestoreOrders(myOrders);
+    });
+    return () => unsubscribe();
+  }, [user?.uid]);
+
+  // Use Firestore orders as primary source
+  const allOrders: Order[] = firestoreOrders;
 
   const filtered = allOrders.filter(o => {
     if (activeTab === 'Active') return STEPS.slice(0, 4).includes(o.status);

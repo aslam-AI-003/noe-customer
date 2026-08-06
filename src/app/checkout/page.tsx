@@ -9,7 +9,7 @@ import {
   StickyNote, Loader2, PartyPopper,
 } from 'lucide-react';
 import { useStore } from '@/store/useStore';
-import { SEED_SHOPS } from '@/lib/seed-data';
+import { orderService } from '@/lib/firestoreService';
 import {
   placeOrder,
   deductFromWallet,
@@ -48,7 +48,16 @@ export default function CheckoutPage() {
 
   useEffect(() => { setMounted(true); }, []);
 
-  const shop = SEED_SHOPS.find(s => s.id === cartShopId);
+  // Get shop name from localStorage (saved when user visits shop detail page)
+  const [shopName, setShopName] = useState('Shop');
+  const [shopImage, setShopImage] = useState('/images/shops/shop-1.jpg');
+  useEffect(() => {
+    if (cartShopId) {
+      const name = localStorage.getItem(`noe-shop-name-${cartShopId}`) || 'Shop';
+      setShopName(name);
+    }
+  }, [cartShopId]);
+  const shop = cart.length > 0 ? { name: shopName, images: { banner: shopImage } } : null;
   const subtotal = getCartTotal();
   const deliveryCharge = subtotal >= 500 ? 0 : 50;
   const total = subtotal + deliveryCharge - couponDiscount;
@@ -109,18 +118,17 @@ export default function CheckoutPage() {
 
     setLoading(true);
     try {
-      const shopIcon = shop?.images.banner || '/images/categories/groceries.jpg';
+      const shopIcon = '/images/shops/shop-1.jpg';
       const now = new Date().toISOString();
-      const orderId = 'NOE-' + Date.now().toString(36).toUpperCase().slice(-6);
 
-      // 1. Save to local demo store (always works)
-      addDemoOrder({
-        id: orderId,
+      // 1. PRIMARY: Save to Firestore (this is what vendor sees!)
+      const firestoreOrderId = await orderService.create({
         userId: user.uid,
         shopId: cartShopId || '',
-        shopName: shop?.name || 'Unknown Shop',
+        vendorId: cartShopId || '', // vendor uses this to query orders
+        shopName: shopName,
         shopIcon,
-        items: [...cart],
+        items: cart.map(i => ({ name: i.name, quantity: i.quantity, price: i.discountPrice || i.price })),
         subtotal,
         deliveryCharge,
         total,
@@ -132,13 +140,15 @@ export default function CheckoutPage() {
         customerPhone: user.phone || '9876543210',
         createdAt: now,
         updatedAt: now,
-      });
+      } as any);
 
-      // 2. Also try Firestore (non-blocking)
+      const orderId = firestoreOrderId || ('NOE-' + Date.now().toString(36).toUpperCase().slice(-6));
+
+      // 2. Also save via firebaseService for notifications (non-blocking)
       placeOrder({
         userId: user.uid,
         shopId: cartShopId || '',
-        shopName: shop?.name || 'Unknown Shop',
+        shopName: shopName,
         shopIcon,
         items: cart,
         subtotal,
@@ -150,7 +160,7 @@ export default function CheckoutPage() {
         notes: notes || '',
       }).catch(() => {});
 
-      // 3. If wallet payment, deduct locally
+      // 3. If wallet payment, deduct
       if (paymentMethod === 'wallet') {
         useStore.getState().setWalletBalance(walletBalance - total);
         deductFromWallet(user.uid, total, `Order ${orderId} Payment`, orderId).catch(() => {});
@@ -164,7 +174,7 @@ export default function CheckoutPage() {
       NOTIFICATIONS.orderPlaced(orderId).catch(() => {});
 
       toast.success('🎉 Order placed successfully!');
-      router.push('/orders');
+      router.push('/orders?new=1');
     } catch (err: any) {
       console.error('Place order error:', err);
       toast.error('Failed to place order. Please try again.');
@@ -265,7 +275,7 @@ export default function CheckoutPage() {
           </div>
           <div>
             <p className="text-sm font-bold text-body">Estimated Delivery</p>
-            <p className="text-xs text-faint">{(shop?.avgPrepTime || 20) + 15}–{(shop?.avgPrepTime || 20) + 25} minutes</p>
+            <p className="text-xs text-faint">35–45 minutes</p>
           </div>
           <div className="ml-auto badge badge-success">On Time</div>
         </div>

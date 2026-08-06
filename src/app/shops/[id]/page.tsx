@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useParams } from 'next/navigation';
@@ -9,7 +9,10 @@ import {
   Phone, Clock, Bike, Wallet, Store, Utensils, Info,
 } from 'lucide-react';
 import { useStore } from '@/store/useStore';
-import { SEED_SHOPS, SEED_PRODUCTS } from '@/lib/seed-data';
+import { vendorService, productService } from '@/lib/firestoreService';
+import { db } from '@/lib/firebase';
+import { collection, onSnapshot } from 'firebase/firestore';
+import type { VendorRegistration, VendorProduct } from '@/store/useStore';
 import toast from 'react-hot-toast';
 
 // ━━━ REVIEWS SECTION (real reviews from store + sample fallback) ━━━
@@ -90,56 +93,91 @@ function ReviewsSection({ shopId, shopRating, shopTotalRatings }: { shopId: stri
 
 export default function ShopDetailPage() {
   const { id } = useParams<{ id: string }>();
-  const { cart, addToCart, updateQuantity, removeFromCart, favoriteShopIds, toggleFavorite, vendorRegistrations, vendorProducts } = useStore();
+  const { cart, addToCart, updateQuantity, removeFromCart, favoriteShopIds, toggleFavorite } = useStore();
   const [activeTab, setActiveTab] = useState('menu');
   const [vegOnly, setVegOnly] = useState(false);
+  const [shop, setShop] = useState<any>(null);
+  const [products, setProducts] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [firestoreDocId, setFirestoreDocId] = useState<string | null>(null); // Track actual Firestore doc ID
 
-  // Try seed shops first, then look in approved vendor registrations
-  const seedShop = SEED_SHOPS.find(s => s.id === id);
-  const vendorReg = !seedShop ? vendorRegistrations.find(v => v.status === 'approved' && (v.shopId === id || v.id === id)) : null;
+  // Step 1: Find vendor and get the actual Firestore doc ID
+  useEffect(() => {
+    const unsubVendors = vendorService.onAll((vendors) => {
+      // Find vendor by Firestore doc ID OR by shopId field
+      const vendor: any = vendors.find((v: any) => v.status === 'approved' && (v.id === id || v.shopId === id));
+      if (vendor) {
+        const docId = vendor.id; // Always the Firestore doc.id
+        setFirestoreDocId(docId);
+        
+        // Save shop name for checkout page
+        if (typeof window !== 'undefined') {
+          localStorage.setItem(`noe-shop-name-${id}`, vendor.shopName || 'Shop');
+          localStorage.setItem(`noe-shop-name-${docId}`, vendor.shopName || 'Shop');
+        }
+        setShop({
+          id: vendor.id,
+          name: vendor.shopName || 'Shop',
+          nameTamil: vendor.shopNameTamil || '',
+          description: vendor.description || `${vendor.shopType || 'shop'} • ${vendor.city || ''}`,
+          categoryId: vendor.shopType || 'general',
+          images: { banner: vendor.shopPhotoUrl || '/images/shops/shop-1.jpg', logo: '/images/shops/shop-1.jpg' },
+          rating: vendor.rating || 4.5,
+          totalRatings: vendor.totalRatings || 0,
+          totalOrders: vendor.totalOrders || 0,
+          avgPrepTime: vendor.prepTime || 20,
+          deliveryCharge: vendor.deliveryCharge || 25,
+          freeDeliveryAbove: vendor.freeDeliveryAbove || 299,
+          minOrderAmount: vendor.minOrder || 0,
+          deliveryRadius: vendor.deliveryRadius || 5,
+          isOpen: vendor.isOnline !== false && !vendor.holidayMode,
+          isFeatured: vendor.isFeatured || false,
+          address: { full: vendor.address || '', city: vendor.city || '', pincode: vendor.pincode || '', lat: vendor.lat || 11.02, lng: vendor.lng || 76.97 },
+          openTime: vendor.operatingHours?.[0]?.open || '08:00',
+          closeTime: vendor.operatingHours?.[0]?.close || '22:00',
+          tags: [vendor.shopType || 'shop'],
+          phone: vendor.phone || '',
+        });
+        setLoading(false);
+      } else {
+        setLoading(false);
+      }
+    });
+    return () => unsubVendors();
+  }, [id]);
 
-  // Build a unified shop object
-  const shop = seedShop || (vendorReg ? {
-    id: vendorReg.shopId || vendorReg.id,
-    name: vendorReg.shopName,
-    description: `${vendorReg.category} shop by ${vendorReg.ownerName}`,
-    categoryId: vendorReg.category,
-    images: { banner: '/images/shops/shop-1.jpg', logo: '/images/shops/shop-1.jpg' },
-    rating: 4.5,
-    totalRatings: 0,
-    totalOrders: 0,
-    avgPrepTime: 20,
-    deliveryCharge: 25,
-    freeDeliveryAbove: 299,
-    minOrderAmount: 0,
-    deliveryRadius: 5,
-    isOpen: true,
-    isFeatured: false,
-    address: { full: vendorReg.address, city: vendorReg.city, pincode: vendorReg.pincode, lat: 11.02, lng: 76.97 },
-    openTime: '08:00',
-    closeTime: '22:00',
-    tags: ['New'],
-  } : null);
+  // Step 2: Once we have the correct Firestore doc ID, subscribe to menu
+  useEffect(() => {
+    if (!firestoreDocId || !db) return;
 
-  // Get products: seed products OR vendor products
-  const seedProducts = SEED_PRODUCTS.filter(p => p.shopId === id && (!vegOnly || p.isVeg));
-  const vendorProds = vendorProducts
-    .filter(p => p.shopId === id && p.isAvailable && (!vegOnly || p.isVeg))
-    .map(p => ({
-      id: p.id,
-      shopId: p.shopId,
-      name: p.name,
-      nameTamil: p.nameTamil,
-      price: p.price,
-      discountPrice: p.discountPrice,
-      unit: p.unit,
-      category: p.category,
-      isVeg: p.isVeg,
-      isAvailable: p.isAvailable,
-      image: p.image || '/images/products/meals-thali.jpg',
-      description: p.description || '',
-    }));
-  const products = [...seedProducts, ...vendorProds];
+    // Subscribe to vendors/{firestoreDocId}/menu/ subcollection
+    const menuRef = collection(db, 'vendors', firestoreDocId, 'menu');
+    const unsubMenu = onSnapshot(menuRef, (snapshot) => {
+      const menuItems = snapshot.docs.map(d => {
+        const data = d.data();
+        return {
+          id: d.id,
+          shopId: id,
+          name: data.name || '',
+          nameTamil: data.nameTamil || data.name || '',
+          price: data.price || 0,
+          discountPrice: data.discountPrice || null,
+          unit: data.unit || '1 pc',
+          category: data.category || 'general',
+          isVeg: data.isVeg !== false,
+          isAvailable: data.isAvailable !== false,
+          image: (data.image && data.image.startsWith('http')) ? data.image : '/images/products/meals-thali.jpg',
+          description: data.description || '',
+        };
+      }).filter(p => p.isAvailable);
+      setProducts(menuItems);
+    });
+
+    return () => unsubMenu();
+  }, [firestoreDocId, id]);
+
+  // Filter veg
+  const filteredProducts = vegOnly ? products.filter(p => p.isVeg) : products;
 
   const cartItems = cart.filter(i => i.shopId === id);
   const cartTotal = cartItems.reduce((sum, i) => sum + (i.discountPrice || i.price) * i.quantity, 0);

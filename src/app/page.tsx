@@ -8,7 +8,9 @@ import {
   ChevronRight, Store, Mic,
 } from 'lucide-react';
 import { useStore } from '@/store/useStore';
-import { SEED_SHOPS, SEED_CATEGORIES, SEED_BANNERS } from '@/lib/seed-data';
+import { SEED_CATEGORIES, SEED_BANNERS } from '@/lib/seed-data';
+import { vendorService, productService } from '@/lib/firestoreService';
+import type { VendorRegistration } from '@/store/useStore';
 import { ThemeToggle } from '@/components/ui/ThemeToggle';
 import VoiceOrderButton from '@/components/ui/VoiceOrderButton';
 
@@ -25,24 +27,62 @@ const PROMO_META: Record<string, { title: string; sub: string; desc: string; cod
   b3: { title: '₹100 Cashback', sub: 'Wallet Payment', desc: 'Use code below', code: 'WALLET100' },
 };
 
+// Helper: Convert Firestore vendor doc to a shop-like object for UI
+function vendorToShop(v: any) {
+  return {
+    id: v.id, // Firestore doc ID — used in URL /shops/{id}
+    name: v.shopName || 'Shop',
+    nameTamil: v.shopNameTamil || v.shopName || '',
+    description: v.description || `${v.shopType || 'shop'} • ${v.city || ''}`,
+    categoryId: v.shopType || 'general',
+    tags: [v.shopType || 'shop'],
+    images: { banner: v.shopPhotoUrl || '/images/shops/shop-1.jpg', logo: '' },
+    isOpen: v.isOnline !== false && !v.holidayMode,
+    isFeatured: v.isFeatured || false,
+    rating: v.rating || 4.5,
+    totalRatings: v.totalRatings || 0,
+    avgPrepTime: v.prepTime || 20,
+    deliveryRadius: v.deliveryRadius || 5,
+    address: { full: v.address || '', city: v.city || '', pincode: v.pincode || '' },
+  };
+}
+
 export default function HomePage() {
   const { getCartItemCount, getCartTotal, currentLocation } = useStore();
   const [activeBanner, setActiveBanner] = useState(0);
   const [mounted, setMounted] = useState(false);
-  const [openShopsCount] = useState(SEED_SHOPS.filter(s => s.isOpen).length);
+  const [shops, setShops] = useState<ReturnType<typeof vendorToShop>[]>([]);
+  const [loadingShops, setLoadingShops] = useState(true);
   const [showVoice, setShowVoice] = useState(false);
   const bannerRef = useRef<NodeJS.Timeout | null>(null);
 
+  // Load approved vendors from Firestore (real-time)
   useEffect(() => {
     setMounted(true);
     bannerRef.current = setInterval(() => setActiveBanner(p => (p + 1) % SEED_BANNERS.length), 4000);
-    return () => { if (bannerRef.current) clearInterval(bannerRef.current); };
+
+    // Real-time listener for approved vendors (only fully onboarded ones)
+    const unsubscribe = vendorService.onAll((vendors) => {
+      const approved = vendors
+        .filter((v: any) => v.status === 'approved' && v.onboardingStep >= 3 && v.address)
+        .map(vendorToShop);
+      setShops(approved);
+      setLoadingShops(false);
+    });
+
+    return () => {
+      if (bannerRef.current) clearInterval(bannerRef.current);
+      unsubscribe();
+    };
   }, []);
 
   const cartCount = mounted ? getCartItemCount() : 0;
   const cartTotal = mounted ? getCartTotal() : 0;
-  const featuredShops = SEED_SHOPS.filter(s => s.isFeatured).slice(0, 6);
-  const openShops = SEED_SHOPS.filter(s => s.isOpen).slice(0, 6);
+  const openShops = shops.filter(s => s.isOpen).slice(0, 6);
+  const featuredShops = shops.filter(s => s.isFeatured).slice(0, 6).length > 0
+    ? shops.filter(s => s.isFeatured).slice(0, 6)
+    : shops.slice(0, 6); // If no featured, show all
+  const openShopsCount = shops.filter(s => s.isOpen).length;
 
   return (
     <main className="min-h-screen app-bg pb-24 md:pb-8">

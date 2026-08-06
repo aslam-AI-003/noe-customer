@@ -1,12 +1,14 @@
 'use client';
 
-import React, { useState, Suspense } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useSearchParams } from 'next/navigation';
 import { ArrowLeft, Search, Star, Zap, MapPin, Heart, Store, Navigation } from 'lucide-react';
 import { useStore } from '@/store/useStore';
-import { SEED_SHOPS, SEED_CATEGORIES } from '@/lib/seed-data';
+import { SEED_CATEGORIES } from '@/lib/seed-data';
+import { vendorService } from '@/lib/firestoreService';
+import type { VendorRegistration } from '@/store/useStore';
 import { getAreaById, getDistanceKm } from '@/lib/serviceAreas';
 
 function ShopsContent() {
@@ -21,33 +23,41 @@ function ShopsContent() {
   // Get selected area for filtering
   const selectedArea = getAreaById(selectedAreaId);
 
-  // Convert approved vendor registrations to shop format
-  const approvedVendorShops = vendorRegistrations
-    .filter(v => v.status === 'approved')
-    .map(v => ({
-      id: v.shopId || v.id,
-      name: v.shopName,
-      description: `${v.category} shop by ${v.ownerName}`,
-      categoryId: v.category,
-      images: { banner: '/images/shops/shop-1.jpg', logo: '/images/shops/shop-1.jpg' },
-      rating: 4.5,
-      totalRatings: 0,
-      totalOrders: 0,
-      avgPrepTime: 20,
-      deliveryCharge: 25,
-      freeDeliveryAbove: 299,
-      minOrderAmount: 0,
-      deliveryRadius: 5,
-      isOpen: true,
-      isFeatured: false,
-      address: { full: v.address, city: v.city, pincode: v.pincode, lat: 11.02, lng: 76.97 },
-      openTime: '08:00',
-      closeTime: '22:00',
-      tags: ['New', v.category],
-    }));
+  // Real-time Firestore vendors
+  const [firebaseShops, setFirebaseShops] = useState<any[]>([]);
 
-  // Combine seed shops + approved vendor shops
-  const allShops = [...SEED_SHOPS, ...approvedVendorShops];
+  useEffect(() => {
+    const unsubscribe = vendorService.onAll((vendors) => {
+      const approved = vendors
+        .filter((v: any) => v.status === 'approved' && v.onboardingStep >= 3 && v.address)
+        .map((v: any) => ({
+          id: v.id, // Firestore doc ID — used in URL /shops/{id}
+          name: v.shopName || 'Shop',
+          description: v.description || `${v.shopType || 'shop'} • ${v.city || ''}`,
+          categoryId: v.shopType || 'general',
+          images: { banner: v.shopPhotoUrl || '/images/shops/shop-1.jpg', logo: '/images/shops/shop-1.jpg' },
+          rating: v.rating || 4.5,
+          totalRatings: v.totalRatings || 0,
+          totalOrders: v.totalOrders || 0,
+          avgPrepTime: v.prepTime || 20,
+          deliveryCharge: v.deliveryCharge || 25,
+          freeDeliveryAbove: v.freeDeliveryAbove || 299,
+          minOrderAmount: v.minOrder || 0,
+          deliveryRadius: v.deliveryRadius || 5,
+          isOpen: v.isOnline !== false && !v.holidayMode,
+          isFeatured: v.isFeatured || false,
+          address: { full: v.address || '', city: v.city || '', pincode: v.pincode || '', lat: v.lat || 11.02, lng: v.lng || 76.97 },
+          openTime: v.operatingHours?.[0]?.open || '08:00',
+          closeTime: v.operatingHours?.[0]?.close || '22:00',
+          tags: [v.shopType || 'shop'],
+        }));
+      setFirebaseShops(approved);
+    });
+    return () => unsubscribe();
+  }, []);
+
+  // Use only Firestore vendors (no seed data)
+  const allShops = firebaseShops;
 
   // ━━━ AREA-BASED FILTERING ━━━
   // Show shops in selected area OR within 15km radius

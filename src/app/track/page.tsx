@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
 import { useStore } from '@/store/useStore';
+import { orderService } from '@/lib/firestoreService';
 import {
   ArrowLeft, Phone, MapPin, Clock, Package, Bike, Store,
   CheckCircle2, Navigation, Share2, MessageSquare,
@@ -28,22 +29,30 @@ const STATUS_STEPS = [
 ];
 
 export default function TrackOrderPage() {
-  const { demoOrders, user } = useStore();
+  const { user } = useStore();
   const [mounted, setMounted] = useState(false);
   const [riderLat, setRiderLat] = useState(0);
   const [riderLng, setRiderLng] = useState(0);
+  const [trackingOrder, setTrackingOrder] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
   const animationRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => { setMounted(true); }, []);
 
-  if (!mounted) return <div className="min-h-screen app-bg animate-pulse" />;
+  // Real-time listener for active orders from Firestore
+  useEffect(() => {
+    if (!user?.uid) { setLoading(false); return; }
+    const unsubscribe = orderService.onAll((liveOrders) => {
+      const myActiveOrders = liveOrders.filter((o: any) =>
+        o.userId === user.uid && !['delivered', 'cancelled'].includes(o.status)
+      );
+      setTrackingOrder(myActiveOrders[0] || null);
+      setLoading(false);
+    });
+    return () => unsubscribe();
+  }, [user?.uid]);
 
-  // Get the most recent active order for tracking
-  const activeOrders = demoOrders.filter(o =>
-    o.userId === (user?.uid || '') &&
-    !['delivered', 'cancelled'].includes(o.status)
-  );
-  const trackingOrder = activeOrders[0] || demoOrders.find(o => !['delivered', 'cancelled'].includes(o.status));
+  if (!mounted || loading) return <div className="min-h-screen app-bg animate-pulse" />;
 
   if (!trackingOrder) {
     return (
