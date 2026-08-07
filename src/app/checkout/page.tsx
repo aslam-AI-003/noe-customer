@@ -9,13 +9,12 @@ import {
   StickyNote, Loader2, PartyPopper,
 } from 'lucide-react';
 import { useStore } from '@/store/useStore';
-import { orderService } from '@/lib/firestoreService';
+import { placeOrder as placeNoxOrder } from '@/lib/noxOrderService';
+import { generateShopCode, getAreaCode, generateCustomerId } from '@/lib/noxIdGenerator';
+import type { CreateNoxOrderInput, NoxPaymentMethod } from '@/types/noxOrder';
 import { db } from '@/lib/firebase';
-import { doc, updateDoc, increment, getDoc } from 'firebase/firestore';
 import {
-  placeOrder,
   deductFromWallet,
-  addNotification,
 } from '@/lib/firebaseService';
 import { NOTIFICATIONS } from '@/lib/pushNotification';
 import { validateCoupon, getBestCouponSuggestion, CouponResult } from '@/lib/coupons';
@@ -120,91 +119,84 @@ export default function CheckoutPage() {
 
     setLoading(true);
     try {
-      const shopIcon = '/images/shops/shop-1.jpg';
-      const now = new Date().toISOString();
-
       // Resolve the actual Firestore doc ID for the vendor
       const vendorDocId = (typeof window !== 'undefined' && cartShopId)
         ? localStorage.getItem(`noe-vendor-docid-${cartShopId}`) || cartShopId
         : cartShopId || '';
 
-      // Generate readable Order ID: NOE-SHOPNAME-001
-      let orderId = 'NOE-' + Date.now().toString(36).toUpperCase().slice(-6);
-      try {
-        if (db && vendorDocId) {
-          // Get shop short code (first 6 chars of shopName, uppercase, no spaces)
-          const shopCode = shopName.replace(/[^a-zA-Z0-9]/g, '').toUpperCase().slice(0, 6) || 'SHOP';
-          // Increment vendor's order counter atomically
-          const vendorRef = doc(db, 'vendors', vendorDocId);
-          await updateDoc(vendorRef, { orderCounter: increment(1) });
-          const vendorSnap = await getDoc(vendorRef);
-          const counter = vendorSnap.data()?.orderCounter || 1;
-          orderId = `NOE-${shopCode}-${String(counter).padStart(3, '0')}`;
-        }
-      } catch (e) {
-        console.warn('Order ID generation fallback:', e);
-      }
+      // Get area from selected address
+      const area = selectedAddress?.city || 'Thanjavur';
+      const areaCode = getAreaCode(area);
+      const shopCode = generateShopCode(shopName);
+      const customerId = generateCustomerId(user.phone || '9876543210', area);
 
-      // Generate 4-digit delivery OTP for rider verification
-      const deliveryOtp = String(Math.floor(1000 + Math.random() * 9000));
+      // Map payment method to NOX format
+      const noxPaymentMethod: NoxPaymentMethod = 
+        paymentMethod === 'cod' ? 'COD' :
+        paymentMethod === 'upi' ? 'UPI' :
+        paymentMethod === 'card' ? 'card' : 'wallet';
 
-      // 1. PRIMARY: Save to Firestore (this is what vendor sees!)
-      const firestoreOrderId = await orderService.create({
-        userId: user.uid,
-        orderId, // Readable order ID: NOE-TEABOY-001
+      // Build NOX Order Input
+      const orderInput: CreateNoxOrderInput = {
         shopId: vendorDocId,
-        vendorId: vendorDocId, // vendor queries orders by their Firestore doc ID
-        shopName: shopName,
-        shopIcon,
-        items: cart.map(i => ({ name: i.name, quantity: i.quantity, price: i.discountPrice || i.price })),
-        subtotal,
-        deliveryCharge,
-        totalAmount: total,
-        total,
-        status: 'new', // vendor expects 'new' status for incoming orders
-        riderStatus: 'pending', // Will change to 'searching' when vendor marks ready
-        deliveryOtp, // 4-digit OTP — customer sees it, rider verifies before marking delivered
-        paymentMethod,
-        address: selectedAddress,
-        deliveryAddress: selectedAddress?.fullAddress || '',
-        notes: notes || '',
+        shopCode,
+        shopName,
+        shopLocation: null, // Will be populated from shop data if available
+        customerId,
         customerName: user.displayName || 'Customer',
         customerPhone: user.phone || '9876543210',
-        createdAt: now,
-        updatedAt: now,
-      } as any);
-
-      // 2. Also save via firebaseService for notifications (non-blocking)
-      placeOrder({
-        userId: user.uid,
-        shopId: cartShopId || '',
-        shopName: shopName,
-        shopIcon,
-        items: cart,
+        customerLocation: null, // Will be populated from GPS if available
+        items: cart.map(item => ({
+          productId: item.productId,
+          name: item.name,
+          image: (item as any).image || '',
+          price: item.discountPrice || item.price,
+          quantity: item.quantity,
+          unit: item.unit || 'pc',
+          total: (item.discountPrice || item.price) * item.quantity,
+        })),
         subtotal,
-        deliveryCharge,
+        deliveryFee: deliveryCharge,
+        platformFee: 5,
+        discount: couponDiscount,
+        couponCode: couponDiscount > 0 ? couponCode : null,
         total,
-        status: 'placed',
-        paymentMethod,
-        address: selectedAddress,
-        notes: notes || '',
-      }).catch(() => {});
+        paymentMethod: noxPaymentMethod,
+        deliveryAddress: selectedAddress?.fullAddress || '',
+        deliveryLandmark: selectedAddress?.landmark || '',
+        area,
+        areaCode,
+        customerNote: notes || null,
+        estimatedDelivery: '35-45 mins',
+        distance: 3.5, // TODO: Calculate from GPS
+      };
 
-      // 3. If wallet payment, deduct
-      if (paymentMethod === 'wallet') {
-        useStore.getState().setWalletBalance(walletBalance - total);
-        deductFromWallet(user.uid, total, `Order ${orderId} Payment`, orderId).catch(() => {});
+      // 🚀 Place order using NOX Order Service (writes to Firestore with NOX ID!)
+      const noxOrder = await placeNoxOrder(orderInput);
+
+      if (!noxOrder) {
+        throw new Error('Failed to create order in Firestore');
       }
 
-      // 4. Clear cart
+      console.log('✅ NOX Order placed:', noxOrder.orderId);
+
+      // If wallet payment, deduct
+      if (paymentMethod === 'wallet') {
+        useStore.getState().setWalletBalance(walletBalance - total);
+        deductFromWallet(user.uid, total, `Order ${noxOrder.orderId} Payment`, noxOrder.orderId).catch(() => {});
+      }
+
+      // Clear cart
       orderPlacedRef.current = true;
       clearCart();
 
-      // 5. Send push notification (non-blocking)
-      NOTIFICATIONS.orderPlaced(orderId).catch(() => {});
+      // Send push notification (non-blocking)
+      NOTIFICATIONS.orderPlaced(noxOrder.orderId).catch(() => {});
 
-      toast.success('🎉 Order placed successfully!');
-      router.push('/orders?new=1');
+      toast.success(`🎉 Order placed! ID: ${noxOrder.orderId}`);
+      
+      // Navigate to track page with the real NOX order ID
+      router.push(`/track?orderId=${noxOrder.orderId}`);
     } catch (err: any) {
       console.error('Place order error:', err);
       toast.error('Failed to place order. Please try again.');
