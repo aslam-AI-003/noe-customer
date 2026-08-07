@@ -166,20 +166,27 @@ export default function HomePage() {
         </div>
       </header>
 
-      {/* ── NOT SERVICEABLE BANNER ── */}
+      {/* ── NOT SERVICEABLE — FULL BLOCK ── */}
       {locationStatus === 'not_serviceable' && (
-        <div className="max-w-5xl mx-auto px-4 pt-4">
-          <div className="p-4 bg-red-500/10 border border-red-500/20 rounded-2xl flex items-start gap-3">
-            <div className="w-10 h-10 bg-red-500/15 rounded-xl flex items-center justify-center flex-shrink-0">
-              <MapPin size={18} className="text-red-500" />
+        <div className="max-w-5xl mx-auto px-4 pt-6 pb-20">
+          <div className="glass-card p-8 text-center space-y-5">
+            <div className="w-20 h-20 bg-red-500/10 rounded-3xl flex items-center justify-center mx-auto">
+              <MapPin size={36} className="text-red-500" />
             </div>
-            <div className="flex-1">
-              <p className="text-sm font-bold text-red-600 dark:text-red-400">Outside Service Area</p>
-              <p className="text-xs text-muted mt-0.5">
-                We currently deliver only in <span className="font-bold">Thanjavur to Kumbakonam</span> corridor.
-                Your location is outside our service area.
+            <div>
+              <h2 className="text-xl font-black text-body">Outside Service Area</h2>
+              <p className="text-sm text-muted mt-2">
+                We currently deliver only in the<br />
+                <span className="font-bold text-accent">Thanjavur ↔ Kumbakonam</span> corridor.
               </p>
-              <p className="text-[10px] text-faint mt-1">🚀 We&apos;re expanding soon! Stay tuned.</p>
+              <p className="text-xs text-faint mt-2">Your GPS location is outside our delivery zone.</p>
+            </div>
+            <div className="p-4 bg-orange-500/8 border border-orange-500/20 rounded-2xl">
+              <p className="text-xs font-bold text-body mb-1">🚀 We&apos;re expanding soon!</p>
+              <p className="text-[11px] text-muted">We&apos;ll notify you when we reach your area.</p>
+            </div>
+            <div className="pt-2">
+              <p className="text-[10px] text-faint">Service areas: Thanjavur, Kumbakonam, Papanasam, Thiruvaiyaru, Swamimalai, Darasuram, Mayiladuthurai & 20+ towns</p>
             </div>
           </div>
         </div>
@@ -196,6 +203,9 @@ export default function HomePage() {
           </div>
         </div>
       )}
+
+      {/* ── MAIN CONTENT (only if serviceable) ── */}
+      {locationStatus !== 'not_serviceable' && (<>
 
       {/* ── HERO SECTION ── */}
       <section className="relative overflow-hidden">
@@ -508,6 +518,8 @@ export default function HomePage() {
           </div>
         </div>
       </div>
+
+      </>)}
 
       {/* ── BOTTOM NAV ── */}
       <nav className="bottom-nav md:hidden">
