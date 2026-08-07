@@ -3,8 +3,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
+import { useSearchParams } from 'next/navigation';
 import { useStore } from '@/store/useStore';
 import { orderService } from '@/lib/firestoreService';
+import { trackOrder } from '@/lib/noxOrderService';
+import type { NoxOrder } from '@/types/noxOrder';
 import {
   ArrowLeft, Phone, MapPin, Clock, Package, Bike, Store,
   CheckCircle2, Navigation, Share2, MessageSquare,
@@ -30,6 +33,8 @@ const STATUS_STEPS = [
 
 export default function TrackOrderPage() {
   const { user } = useStore();
+  const searchParams = useSearchParams();
+  const orderId = searchParams.get('orderId');
   const [mounted, setMounted] = useState(false);
   const [riderLat, setRiderLat] = useState(0);
   const [riderLng, setRiderLng] = useState(0);
@@ -39,9 +44,45 @@ export default function TrackOrderPage() {
 
   useEffect(() => { setMounted(true); }, []);
 
-  // Real-time listener for active orders from Firestore
+  // Real-time listener — use NOX trackOrder if orderId is a NOX ID, else fallback
   useEffect(() => {
     if (!user?.uid) { setLoading(false); return; }
+
+    // If we have a specific NOX orderId from checkout redirect, track it
+    if (orderId && orderId.startsWith('NOX-')) {
+      const unsubscribe = trackOrder(orderId, (noxOrder) => {
+        if (noxOrder) {
+          // Normalize NOX status to local status
+          const normalizedStatus = noxOrder.status === 'placed' ? 'new' : noxOrder.status;
+          setTrackingOrder({
+            id: noxOrder.orderId,
+            orderId: noxOrder.orderId,
+            shopName: noxOrder.shopName,
+            customerName: noxOrder.customerName,
+            items: noxOrder.items,
+            total: noxOrder.total,
+            status: normalizedStatus,
+            paymentMethod: noxOrder.paymentMethod,
+            createdAt: noxOrder.createdAt,
+            deliveryOtp: noxOrder.deliveryOTP,
+            riderName: noxOrder.riderName || null,
+            riderPhone: noxOrder.riderPhone || null,
+            riderLocation: noxOrder.riderLocation || null,
+            address: {
+              label: 'Delivery',
+              fullAddress: noxOrder.deliveryAddress,
+              lat: noxOrder.customerLocation?.lat,
+              lng: noxOrder.customerLocation?.lng,
+            },
+            userId: noxOrder.customerId,
+          });
+        }
+        setLoading(false);
+      });
+      return () => unsubscribe();
+    }
+
+    // Fallback: listen to all orders (old system)
     const unsubscribe = orderService.onAll((liveOrders) => {
       const myActiveOrders = liveOrders.filter((o: any) =>
         o.userId === user.uid && !['delivered', 'cancelled'].includes(o.status)
@@ -50,7 +91,7 @@ export default function TrackOrderPage() {
       setLoading(false);
     });
     return () => unsubscribe();
-  }, [user?.uid]);
+  }, [user?.uid, orderId]);
 
   if (!mounted || loading) return <div className="min-h-screen app-bg animate-pulse" />;
 
