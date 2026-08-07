@@ -10,7 +10,7 @@ import {
 import { useStore } from '@/store/useStore';
 import { SEED_CATEGORIES, SEED_BANNERS } from '@/lib/seed-data';
 import { vendorService, productService } from '@/lib/firestoreService';
-import { getAreaFromGPS } from '@/lib/serviceAreas';
+import { getAreaFromGPS, getAreaById, getDistanceKm } from '@/lib/serviceAreas';
 import type { VendorRegistration } from '@/store/useStore';
 import { ThemeToggle } from '@/components/ui/ThemeToggle';
 import VoiceOrderButton from '@/components/ui/VoiceOrderButton';
