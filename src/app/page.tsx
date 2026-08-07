@@ -10,6 +10,7 @@ import {
 import { useStore } from '@/store/useStore';
 import { SEED_CATEGORIES, SEED_BANNERS } from '@/lib/seed-data';
 import { vendorService, productService } from '@/lib/firestoreService';
+import { getAreaFromGPS } from '@/lib/serviceAreas';
 import type { VendorRegistration } from '@/store/useStore';
 import { ThemeToggle } from '@/components/ui/ThemeToggle';
 import VoiceOrderButton from '@/components/ui/VoiceOrderButton';
@@ -48,18 +49,52 @@ function vendorToShop(v: any) {
 }
 
 export default function HomePage() {
-  const { getCartItemCount, getCartTotal, currentLocation } = useStore();
+  const { getCartItemCount, getCartTotal, currentLocation, setLocation, setSelectedArea } = useStore();
   const [activeBanner, setActiveBanner] = useState(0);
   const [mounted, setMounted] = useState(false);
   const [shops, setShops] = useState<ReturnType<typeof vendorToShop>[]>([]);
   const [loadingShops, setLoadingShops] = useState(true);
   const [showVoice, setShowVoice] = useState(false);
+  const [locationStatus, setLocationStatus] = useState<'detecting' | 'serviceable' | 'not_serviceable' | 'denied'>('detecting');
+  const [detectedArea, setDetectedArea] = useState<string>('');
   const bannerRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Load approved vendors from Firestore (real-time)
+  // ━━━ GPS DETECTION + SERVICE AREA CHECK ━━━
   useEffect(() => {
     setMounted(true);
     bannerRef.current = setInterval(() => setActiveBanner(p => (p + 1) % SEED_BANNERS.length), 4000);
+
+    // Detect GPS location
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          const { latitude: lat, longitude: lng } = pos.coords;
+          const area = getAreaFromGPS(lat, lng);
+          if (area) {
+            setLocation({ lat, lng, address: area.name });
+            setSelectedArea(area.id);
+            setDetectedArea(area.name);
+            setLocationStatus('serviceable');
+          } else {
+            setLocation({ lat, lng, address: 'Outside service area' });
+            setLocationStatus('not_serviceable');
+          }
+        },
+        (err) => {
+          console.warn('GPS denied or unavailable:', err.message);
+          // Default to Thanjavur if GPS denied
+          setLocation({ lat: 10.787, lng: 79.1378, address: 'Thanjavur (default)' });
+          setSelectedArea('thanjavur');
+          setDetectedArea('Thanjavur');
+          setLocationStatus('serviceable');
+        },
+        { enableHighAccuracy: true, timeout: 10000 }
+      );
+    } else {
+      // No GPS support — default
+      setLocation({ lat: 10.787, lng: 79.1378, address: 'Thanjavur' });
+      setLocationStatus('serviceable');
+    }
 
     // Real-time listener for approved vendors (only fully onboarded ones)
     const unsubscribe = vendorService.onAll((vendors) => {
@@ -130,6 +165,37 @@ export default function HomePage() {
           </div>
         </div>
       </header>
+
+      {/* ── NOT SERVICEABLE BANNER ── */}
+      {locationStatus === 'not_serviceable' && (
+        <div className="max-w-5xl mx-auto px-4 pt-4">
+          <div className="p-4 bg-red-500/10 border border-red-500/20 rounded-2xl flex items-start gap-3">
+            <div className="w-10 h-10 bg-red-500/15 rounded-xl flex items-center justify-center flex-shrink-0">
+              <MapPin size={18} className="text-red-500" />
+            </div>
+            <div className="flex-1">
+              <p className="text-sm font-bold text-red-600 dark:text-red-400">Outside Service Area</p>
+              <p className="text-xs text-muted mt-0.5">
+                We currently deliver only in <span className="font-bold">Thanjavur to Kumbakonam</span> corridor.
+                Your location is outside our service area.
+              </p>
+              <p className="text-[10px] text-faint mt-1">🚀 We&apos;re expanding soon! Stay tuned.</p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── LOCATION DETECTED BADGE ── */}
+      {locationStatus === 'serviceable' && detectedArea && (
+        <div className="max-w-5xl mx-auto px-4 pt-3">
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-emerald-500/8 border border-emerald-500/20 rounded-full">
+            <MapPin size={11} className="text-emerald-500" />
+            <span className="text-[11px] font-bold text-emerald-600 dark:text-emerald-400">
+              📍 Delivering to {detectedArea}
+            </span>
+          </div>
+        </div>
+      )}
 
       {/* ── HERO SECTION ── */}
       <section className="relative overflow-hidden">
