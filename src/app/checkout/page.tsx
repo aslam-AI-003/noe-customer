@@ -145,6 +145,9 @@ export default function CheckoutPage() {
         console.warn('Order ID generation fallback:', e);
       }
 
+      // Generate 4-digit delivery OTP for rider verification
+      const deliveryOtp = String(Math.floor(1000 + Math.random() * 9000));
+
       // 1. PRIMARY: Save to Firestore (this is what vendor sees!)
       const firestoreOrderId = await orderService.create({
         userId: user.uid,
@@ -160,6 +163,7 @@ export default function CheckoutPage() {
         total,
         status: 'new', // vendor expects 'new' status for incoming orders
         riderStatus: 'pending', // Will change to 'searching' when vendor marks ready
+        deliveryOtp, // 4-digit OTP — customer sees it, rider verifies before marking delivered
         paymentMethod,
         address: selectedAddress,
         deliveryAddress: selectedAddress?.fullAddress || '',

@@ -184,12 +184,31 @@ export default function TrackOrderPage() {
               <p className="text-[10px] text-faint">Your delivery partner</p>
             </div>
             <div className="flex gap-2">
-              <a href="tel:+919876543210" className="w-9 h-9 bg-emerald-500/10 rounded-full flex items-center justify-center">
+              <a href={`tel:+91${trackingOrder.riderPhone || '9876543210'}`} className="w-9 h-9 bg-emerald-500/10 rounded-full flex items-center justify-center">
                 <Phone size={14} className="text-emerald-600" />
               </a>
               <button className="w-9 h-9 bg-blue-500/10 rounded-full flex items-center justify-center">
                 <MessageSquare size={14} className="text-blue-600" />
               </button>
+            </div>
+          </div>
+        )}
+
+        {/* ━━━ DELIVERY OTP (Show when rider is on the way) ━━━ */}
+        {trackingOrder.deliveryOtp && ['picked_up', 'on_the_way'].includes(trackingOrder.status) && (
+          <div className="glass-card p-5 border-2 border-orange-500/30 bg-gradient-to-br from-orange-500/5 to-amber-500/5">
+            <div className="text-center">
+              <p className="text-xs font-bold text-muted uppercase tracking-wider mb-2">🔐 Delivery OTP</p>
+              <div className="flex justify-center gap-2">
+                {trackingOrder.deliveryOtp.split('').map((digit: string, i: number) => (
+                  <div key={i} className="w-12 h-14 bg-[var(--card-bg)] border-2 border-orange-500/40 rounded-xl flex items-center justify-center">
+                    <span className="text-2xl font-black text-accent">{digit}</span>
+                  </div>
+                ))}
+              </div>
+              <p className="text-[11px] text-muted mt-3">
+                Share this OTP with the rider to confirm delivery
+              </p>
             </div>
           </div>
         )}
