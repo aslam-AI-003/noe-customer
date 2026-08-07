@@ -55,7 +55,7 @@ export default function CartPage() {
           </div>
         </header>
         <div className="flex flex-col items-center justify-center min-h-[70vh] px-4 text-center">
-          <div className="w-20 h-20 rounded-full bg-orange-500/10 flex items-center justify-center mb-6 animate-float">
+          <div className="w-20 h-20 rounded-full bg-[#0E9F6E]/10 flex items-center justify-center mb-6 animate-float">
             <ShoppingCart size={36} className="text-accent" />
           </div>
           <h2 className="text-2xl font-black text-body">Your cart is empty</h2>
@@ -168,15 +168,15 @@ export default function CartPage() {
                       <span className="text-xs font-black text-body">₹{product.discountPrice || product.price}</span>
                       {inCart ? (
                         <div className="flex items-center gap-1">
-                          <button onClick={() => inCart.quantity === 1 ? removeFromCart(product.id) : updateQuantity(product.id, inCart.quantity - 1)} className="w-5 h-5 rounded-md bg-orange-500/15 text-accent text-xs font-black flex items-center justify-center">−</button>
+                          <button onClick={() => inCart.quantity === 1 ? removeFromCart(product.id) : updateQuantity(product.id, inCart.quantity - 1)} className="w-5 h-5 rounded-md bg-[#0E9F6E]/15 text-accent text-xs font-black flex items-center justify-center">−</button>
                           <span className="text-xs font-bold text-body w-4 text-center">{inCart.quantity}</span>
-                          <button onClick={() => updateQuantity(product.id, inCart.quantity + 1)} className="w-5 h-5 rounded-md bg-orange-500/15 text-accent text-xs font-black flex items-center justify-center">+</button>
+                          <button onClick={() => updateQuantity(product.id, inCart.quantity + 1)} className="w-5 h-5 rounded-md bg-[#0E9F6E]/15 text-accent text-xs font-black flex items-center justify-center">+</button>
                         </div>
                       ) : (
                         <button onClick={() => {
                           addToCart({ productId: product.id, shopId: product.shopId, name: product.name, nameTamil: product.nameTamil, price: product.price, discountPrice: product.discountPrice, quantity: 1, unit: product.unit, isVeg: product.isVeg });
                           toast.success(`${product.name} added!`);
-                        }} className="w-6 h-6 rounded-md flex items-center justify-center text-sm font-black transition-all hover:scale-110 bg-orange-500/15 text-accent border border-orange-500/25">
+                        }} className="w-6 h-6 rounded-md flex items-center justify-center text-sm font-black transition-all hover:scale-110 bg-[#0E9F6E]/15 text-accent border border-[#0E9F6E]/25">
                           +
                         </button>
                       )}
@@ -212,7 +212,7 @@ export default function CartPage() {
           <div className="flex gap-2 mt-3 overflow-x-auto no-scrollbar">
             {SEED_COUPONS.filter(c => c.isActive).map(c => (
               <button key={c.id} onClick={() => { setCouponCode(c.code); setCouponError(''); }}
-                className="flex-shrink-0 px-3 py-1.5 rounded-lg text-xs font-bold transition-colors bg-orange-500/8 border border-orange-500/20 text-accent">
+                className="flex-shrink-0 px-3 py-1.5 rounded-lg text-xs font-bold transition-colors bg-[#0E9F6E]/8 border border-[#0E9F6E]/20 text-accent">
                 {c.code}
               </button>
             ))}
@@ -231,7 +231,7 @@ export default function CartPage() {
               <p className="text-xs text-faint mt-0.5">{selectedAddress.fullAddress} - {selectedAddress.pincode}</p>
             </div>
           ) : (
-            <Link href="/profile" className="block p-3 border border-dashed border-subtle rounded-xl text-center text-xs text-muted hover:border-orange-400/40 hover:text-accent transition-colors">
+            <Link href="/profile" className="block p-3 border border-dashed border-subtle rounded-xl text-center text-xs text-muted hover:border-[#0E9F6E]-400/40 hover:text-accent transition-colors">
               + Add Delivery Address
             </Link>
           )}

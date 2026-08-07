@@ -286,13 +286,13 @@ export default function CheckoutPage() {
             <Link href="/profile" className="text-xs text-accent font-semibold">Change</Link>
           </div>
           {selectedAddress ? (
-            <div className="p-3 bg-orange-500/6 border border-orange-500/20 rounded-xl">
+            <div className="p-3 bg-[#0E9F6E]/6 border border-[#0E9F6E]/20 rounded-xl">
               <p className="text-xs font-bold text-accent">{selectedAddress.label}</p>
               <p className="text-sm text-body mt-0.5">{selectedAddress.fullAddress}</p>
               <p className="text-xs text-faint mt-0.5">{selectedAddress.city} - {selectedAddress.pincode}</p>
             </div>
           ) : (
-            <Link href="/profile" className="block p-3 border border-dashed border-subtle rounded-xl text-center text-sm text-muted hover:border-orange-400/40 hover:text-accent transition-colors">
+            <Link href="/profile" className="block p-3 border border-dashed border-subtle rounded-xl text-center text-sm text-muted hover:border-[#0E9F6E]-400/40 hover:text-accent transition-colors">
               + Add Delivery Address
             </Link>
           )}
@@ -300,7 +300,7 @@ export default function CheckoutPage() {
 
         {/* Delivery Time */}
         <div className="glass-sm p-4 flex items-center gap-3">
-          <div className="w-10 h-10 bg-orange-500/10 rounded-xl flex items-center justify-center">
+          <div className="w-10 h-10 bg-[#0E9F6E]/10 rounded-xl flex items-center justify-center">
             <Zap size={18} className="text-accent" />
           </div>
           <div>
@@ -316,7 +316,7 @@ export default function CheckoutPage() {
           <div className="space-y-2">
             {PAYMENT_METHODS.map(pm => (
               <button key={pm.id} onClick={() => setPaymentMethod(pm.id)}
-                className={`w-full flex items-center gap-3 p-3 rounded-xl border transition-all ${paymentMethod === pm.id ? 'bg-orange-500/8 border-orange-500/30' : 'surface hover:bg-[var(--card-hover)]'}`}>
+                className={`w-full flex items-center gap-3 p-3 rounded-xl border transition-all ${paymentMethod === pm.id ? 'bg-[#0E9F6E]/8 border-[#0E9F6E]/30' : 'surface hover:bg-[var(--card-hover)]'}`}>
                 <pm.icon size={20} className="text-accent flex-shrink-0" />
                 <div className="flex-1 text-left">
                   <p className="text-sm font-semibold text-body">{pm.label}</p>
@@ -326,8 +326,8 @@ export default function CheckoutPage() {
                       : pm.desc}
                   </p>
                 </div>
-                <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${paymentMethod === pm.id ? 'border-orange-500' : 'border-[var(--card-border)]'}`}>
-                  {paymentMethod === pm.id && <div className="w-2 h-2 bg-orange-500 rounded-full" />}
+                <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${paymentMethod === pm.id ? 'border-[#0E9F6E]' : 'border-[var(--card-border)]'}`}>
+                  {paymentMethod === pm.id && <div className="w-2 h-2 bg-[#0E9F6E] rounded-full" />}
                 </div>
               </button>
             ))}
@@ -359,7 +359,7 @@ export default function CheckoutPage() {
                 />
                 <button
                   onClick={handleApplyCoupon}
-                  className="px-4 py-2 rounded-xl text-xs font-bold bg-orange-500 text-white hover:bg-orange-600 transition-colors"
+                  className="px-4 py-2 rounded-xl text-xs font-bold bg-[#0E9F6E] text-white hover:bg-orange-600 transition-colors"
                 >
                   Apply
                 </button>

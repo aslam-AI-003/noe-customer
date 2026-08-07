@@ -21,8 +21,8 @@ const LiveMap = dynamic(() => import('@/components/ui/LiveMap'), { ssr: false })
 const STATUS_STEPS = [
   { key: 'new', label: 'Order Placed', icon: Package, color: 'text-blue-500' },
   { key: 'accepted', label: 'Confirmed', icon: CheckCircle2, color: 'text-purple-500' },
-  { key: 'preparing', label: 'Preparing', icon: Store, color: 'text-orange-500' },
-  { key: 'ready', label: 'Ready', icon: Package, color: 'text-amber-500' },
+  { key: 'preparing', label: 'Preparing', icon: Store, color: 'text-[#0E9F6E]' },
+  { key: 'ready', label: 'Ready', icon: Package, color: 'text-[#0E9F6E]' },
   { key: 'picked_up', label: 'Picked Up', icon: Bike, color: 'text-indigo-500' },
   { key: 'on_the_way', label: 'On the Way', icon: Navigation, color: 'text-cyan-500' },
   { key: 'delivered', label: 'Delivered', icon: CheckCircle2, color: 'text-emerald-500' },
@@ -196,12 +196,12 @@ export default function TrackOrderPage() {
 
         {/* ━━━ DELIVERY OTP (Show when rider is on the way) ━━━ */}
         {trackingOrder.deliveryOtp && ['picked_up', 'on_the_way'].includes(trackingOrder.status) && (
-          <div className="glass-card p-5 border-2 border-orange-500/30 bg-gradient-to-br from-orange-500/5 to-amber-500/5">
+          <div className="glass-card p-5 border-2 border-[#0E9F6E]/30 bg-gradient-to-br from-orange-500/5 to-amber-500/5">
             <div className="text-center">
               <p className="text-xs font-bold text-muted uppercase tracking-wider mb-2">🔐 Delivery OTP</p>
               <div className="flex justify-center gap-2">
                 {trackingOrder.deliveryOtp.split('').map((digit: string, i: number) => (
-                  <div key={i} className="w-12 h-14 bg-[var(--card-bg)] border-2 border-orange-500/40 rounded-xl flex items-center justify-center">
+                  <div key={i} className="w-12 h-14 bg-[var(--card-bg)] border-2 border-[#0E9F6E]/40 rounded-xl flex items-center justify-center">
                     <span className="text-2xl font-black text-accent">{digit}</span>
                   </div>
                 ))}

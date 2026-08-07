@@ -13,7 +13,7 @@ export default function Footer() {
           {/* Brand */}
           <div className="space-y-4">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-amber-400 to-orange-500 rounded-xl flex items-center justify-center">
+              <div className="w-10 h-10 bg-gradient-to-br from-[#0E9F6E] to-[#087f58] rounded-xl flex items-center justify-center">
                 <Bike size={18} className="text-white" />
               </div>
               <div>
@@ -26,7 +26,7 @@ export default function Footer() {
               Neenga Sollunga... Naanga Deliver Pannuvom! Your trusted hyperlocal delivery partner.
             </p>
             <div className="flex items-center gap-3">
-              <a href={`tel:${SUPPORT_PHONE}`} className="w-9 h-9 surface rounded-lg flex items-center justify-center hover:bg-orange-500/15 transition-colors">
+              <a href={`tel:${SUPPORT_PHONE}`} className="w-9 h-9 surface rounded-lg flex items-center justify-center hover:bg-[#0E9F6E]/15 transition-colors">
                 <Phone size={15} className="text-secondary" />
               </a>
               <a href={`https://wa.me/91${SUPPORT_PHONE}`} className="w-9 h-9 surface rounded-lg flex items-center justify-center hover:bg-emerald-500/15 transition-colors">

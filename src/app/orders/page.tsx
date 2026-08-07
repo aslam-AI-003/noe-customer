@@ -28,8 +28,8 @@ const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string; 
   preparing:  { label: 'Preparing',      color: 'text-amber-600 dark:text-amber-400',  bg: 'bg-amber-500/10',  border: 'border-amber-500/20',  icon: ChefHat },
   ready:      { label: 'Ready for Pickup', color: 'text-emerald-600 dark:text-emerald-400', bg: 'bg-emerald-500/10', border: 'border-emerald-500/20', icon: Package },
   picked_up:  { label: 'Picked Up',     color: 'text-indigo-600 dark:text-indigo-400', bg: 'bg-indigo-500/10', border: 'border-indigo-500/20', icon: Bike },
-  on_the_way: { label: 'On the Way',     color: 'text-orange-600 dark:text-orange-400',  bg: 'bg-orange-500/10',  border: 'border-orange-500/20',  icon: Bike },
-  in_transit: { label: 'On the Way',     color: 'text-orange-600 dark:text-orange-400',  bg: 'bg-orange-500/10',  border: 'border-orange-500/20',  icon: Bike },
+  on_the_way: { label: 'On the Way',     color: 'text-orange-600 dark:text-[#0E9F6E]',  bg: 'bg-[#0E9F6E]/10',  border: 'border-[#0E9F6E]/20',  icon: Bike },
+  in_transit: { label: 'On the Way',     color: 'text-orange-600 dark:text-[#0E9F6E]',  bg: 'bg-[#0E9F6E]/10',  border: 'border-[#0E9F6E]/20',  icon: Bike },
   delivered:  { label: 'Delivered',      color: 'text-emerald-600 dark:text-emerald-400', bg: 'bg-emerald-500/10', border: 'border-emerald-500/20', icon: PartyPopper },
   cancelled:  { label: 'Cancelled',      color: 'text-red-600 dark:text-red-400',     bg: 'bg-red-500/10',     border: 'border-red-500/20',     icon: XCircle },
 };
@@ -101,7 +101,7 @@ function RatingModal({ order, onClose, onSubmit }: { order: Order; onClose: () =
           <div className="flex flex-wrap gap-2 mb-4 justify-center">
             {QUICK_TAGS.map(tag => (
               <button key={tag} onClick={() => setTags(prev => prev.includes(tag) ? prev.filter(t => t !== tag) : [...prev, tag])}
-                className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all border ${tags.includes(tag) ? 'bg-orange-500/15 border-orange-500/40 text-accent' : 'surface text-muted'}`}>
+                className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all border ${tags.includes(tag) ? 'bg-[#0E9F6E]/15 border-[#0E9F6E]/40 text-accent' : 'surface text-muted'}`}>
                 {tag}
               </button>
             ))}
@@ -258,7 +258,7 @@ export default function OrdersPage() {
         <div className="flex gap-1 p-1 rounded-xl mb-4 surface">
           {TABS.map(tab => (
             <button key={tab} onClick={() => setActiveTab(tab)}
-              className={`flex-1 py-2 rounded-lg text-xs font-bold transition-all ${activeTab === tab ? 'bg-orange-500 text-white' : 'text-muted hover:text-secondary'}`}>
+              className={`flex-1 py-2 rounded-lg text-xs font-bold transition-all ${activeTab === tab ? 'bg-[#0E9F6E] text-white' : 'text-muted hover:text-secondary'}`}>
               {tab}
             </button>
           ))}
@@ -285,7 +285,7 @@ export default function OrdersPage() {
               const isActive = STEPS.slice(0, 4).includes(order.status);
 
               return (
-                <div key={order.id} className="glass-card p-4 cursor-pointer hover:border-orange-400/25 transition-all"
+                <div key={order.id} className="glass-card p-4 cursor-pointer hover:border-[#0E9F6E]-400/25 transition-all"
                   onClick={() => setSelectedOrder(order)}>
                   <div className="flex items-start justify-between gap-3 mb-3">
                     <div className="flex items-center gap-3 flex-1 min-w-0">
@@ -317,7 +317,7 @@ export default function OrdersPage() {
                           const StepIcon = STEP_ICONS[i];
                           return (
                             <div key={s} className={`flex flex-col items-center gap-1 ${i <= currentIdx ? 'opacity-100' : 'opacity-25'}`}>
-                              <div className={`w-6 h-6 rounded-full flex items-center justify-center ${i <= currentIdx ? 'bg-orange-500 text-white' : 'bg-[var(--bg3)] text-faint'}`}>
+                              <div className={`w-6 h-6 rounded-full flex items-center justify-center ${i <= currentIdx ? 'bg-[#0E9F6E] text-white' : 'bg-[var(--bg3)] text-faint'}`}>
                                 <StepIcon size={12} />
                               </div>
                             </div>
@@ -325,7 +325,7 @@ export default function OrdersPage() {
                         })}
                       </div>
                       <div className="h-1 rounded-full overflow-hidden bg-[var(--bg3)]">
-                        <div className="h-full rounded-full bg-orange-500 transition-all" style={{ width: `${(currentIdx + 1) * 20}%` }} />
+                        <div className="h-full rounded-full bg-[#0E9F6E] transition-all" style={{ width: `${(currentIdx + 1) * 20}%` }} />
                       </div>
                     </div>
                   )}
@@ -348,12 +348,12 @@ export default function OrdersPage() {
                     <div className="flex gap-2" onClick={e => e.stopPropagation()}>
                       {order.status === 'delivered' && !order.rating && (
                         <button onClick={() => setRatingOrder(order)}
-                          className="px-3 py-1.5 rounded-lg text-xs font-bold transition-colors bg-orange-500/10 border border-orange-500/25 text-accent flex items-center gap-1">
+                          className="px-3 py-1.5 rounded-lg text-xs font-bold transition-colors bg-[#0E9F6E]/10 border border-[#0E9F6E]/25 text-accent flex items-center gap-1">
                           <Star size={11} /> Rate
                         </button>
                       )}
                       {order.status === 'in_transit' && (
-                        <Link href="/track" className="px-3 py-1.5 rounded-lg text-xs font-bold transition-colors bg-orange-500/10 border border-orange-500/25 text-accent flex items-center gap-1">
+                        <Link href="/track" className="px-3 py-1.5 rounded-lg text-xs font-bold transition-colors bg-[#0E9F6E]/10 border border-[#0E9F6E]/25 text-accent flex items-center gap-1">
                           <Bike size={11} /> Track
                         </Link>
                       )}

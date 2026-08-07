@@ -127,7 +127,7 @@ export default function HomePage() {
         <div className="max-w-5xl mx-auto px-4 py-3 flex items-center gap-3">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 flex-shrink-0">
-            <div className="w-8 h-8 bg-gradient-to-br from-orange-400 to-orange-600 rounded-xl flex items-center justify-center shadow-lg">
+            <div className="w-8 h-8 bg-gradient-to-br from-[#0E9F6E] to-[#087f58] rounded-xl flex items-center justify-center shadow-lg">
               <Bike size={16} className="text-white" />
             </div>
             <div className="hidden sm:block">
@@ -155,13 +155,13 @@ export default function HomePage() {
             <ThemeToggle variant="icon" />
             <Link href="/notifications" className="btn-icon relative">
               <Bell size={16} />
-              <span className="absolute -top-1 -right-1 w-4 h-4 bg-orange-500 text-white text-[9px] font-black rounded-full flex items-center justify-center">3</span>
+              <span className="absolute -top-1 -right-1 w-4 h-4 bg-[#0E9F6E] text-white text-[9px] font-black rounded-full flex items-center justify-center">3</span>
             </Link>
             <Link href="/cart" className="btn-icon relative">
               <ShoppingCart size={16} />
-              {cartCount > 0 && <span className="absolute -top-1 -right-1 w-4 h-4 bg-orange-500 text-white text-[9px] font-black rounded-full flex items-center justify-center">{cartCount}</span>}
+              {cartCount > 0 && <span className="absolute -top-1 -right-1 w-4 h-4 bg-[#0E9F6E] text-white text-[9px] font-black rounded-full flex items-center justify-center">{cartCount}</span>}
             </Link>
-            <Link href="/profile" className="w-9 h-9 bg-gradient-to-br from-orange-400/20 to-orange-500/10 border border-orange-400/25 rounded-xl flex items-center justify-center text-sm font-black text-accent">U</Link>
+            <Link href="/profile" className="w-9 h-9 bg-gradient-to-br from-[#0E9F6E]/20 to-[#087f58]/10 border border-[#0E9F6E]/25 rounded-xl flex items-center justify-center text-sm font-black text-accent">U</Link>
           </div>
         </div>
       </header>
@@ -181,7 +181,7 @@ export default function HomePage() {
               </p>
               <p className="text-xs text-faint mt-2">Your GPS location is outside our delivery zone.</p>
             </div>
-            <div className="p-4 bg-orange-500/8 border border-orange-500/20 rounded-2xl">
+            <div className="p-4 bg-[#0E9F6E]/8 border border-[#0E9F6E]/20 rounded-2xl">
               <p className="text-xs font-bold text-body mb-1">🚀 We&apos;re expanding soon!</p>
               <p className="text-[11px] text-muted">We&apos;ll notify you when we reach your area.</p>
             </div>
@@ -264,7 +264,7 @@ export default function HomePage() {
                 <div className="absolute inset-0 rounded-full border border-orange-400/20 animate-spin" style={{ animationDuration: '20s' }} />
                 <div className="absolute inset-4 rounded-full border border-orange-400/15" style={{ animation: 'spin 15s linear infinite reverse' }} />
                 {/* Center */}
-                <div className="absolute inset-8 bg-gradient-to-br from-orange-400/15 to-orange-500/10 rounded-full border border-orange-400/25 flex items-center justify-center animate-pulse-glow">
+                <div className="absolute inset-8 bg-gradient-to-br from-[#0E9F6E]/15 to-[#087f58]/10 rounded-full border border-[#0E9F6E]/25 flex items-center justify-center animate-pulse-glow">
                   <Bike size={64} className="text-accent animate-float" />
                 </div>
                 {/* Floating category thumbnails */}
@@ -332,7 +332,7 @@ export default function HomePage() {
           <div className="flex justify-center gap-1.5 mt-3">
             {SEED_BANNERS.map((_, i) => (
               <button key={i} onClick={() => setActiveBanner(i)}
-                className={`h-1.5 rounded-full transition-all ${i === activeBanner ? 'w-6 bg-orange-500' : 'w-1.5 bg-[var(--card-border)]'}`} />
+                className={`h-1.5 rounded-full transition-all ${i === activeBanner ? 'w-6 bg-[#0E9F6E]' : 'w-1.5 bg-[var(--card-border)]'}`} />
             ))}
           </div>
         </div>
@@ -426,7 +426,7 @@ export default function HomePage() {
                 </div>
               </div>
               <div className="flex-shrink-0">
-                <div className="w-8 h-8 bg-orange-500/10 border border-orange-500/20 rounded-xl flex items-center justify-center group-hover:bg-orange-500/20 transition-colors">
+                <div className="w-8 h-8 bg-[#0E9F6E]/10 border border-[#0E9F6E]/20 rounded-xl flex items-center justify-center group-hover:bg-[#0E9F6E]/20 transition-colors">
                   <ChevronRight size={14} className="text-accent" />
                 </div>
               </div>
@@ -448,7 +448,7 @@ export default function HomePage() {
               { icon: Bike, title: 'Get Delivered', desc: 'Track in real-time' },
             ].map((s, i) => (
               <div key={i} className="text-center">
-                <div className="w-10 h-10 bg-orange-500/10 border border-orange-500/20 rounded-2xl flex items-center justify-center mx-auto mb-2 hover:scale-110 transition-transform">
+                <div className="w-10 h-10 bg-[#0E9F6E]/10 border border-[#0E9F6E]/20 rounded-2xl flex items-center justify-center mx-auto mb-2 hover:scale-110 transition-transform">
                   <s.icon size={18} className="text-accent" />
                 </div>
                 <p className="text-xs font-black text-body">{s.title}</p>
@@ -463,7 +463,7 @@ export default function HomePage() {
       <div className="max-w-5xl mx-auto px-4 mb-6">
         <div className="grid grid-cols-2 gap-3">
           <Link href="/offers" className="glass-card p-4 flex items-center gap-3 bg-gradient-to-br from-orange-400/10 to-transparent border-orange-400/20 hover:border-orange-400/40 transition-all group">
-            <div className="w-11 h-11 bg-orange-500/10 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+            <div className="w-11 h-11 bg-[#0E9F6E]/10 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
               <Zap size={20} className="text-accent" />
             </div>
             <div>
@@ -471,8 +471,8 @@ export default function HomePage() {
               <p className="text-xs text-faint">Save up to 50%</p>
             </div>
           </Link>
-          <Link href="/track" className="glass-card p-4 flex items-center gap-3 bg-gradient-to-br from-orange-500/10 to-transparent border-orange-500/20 hover:border-orange-500/40 transition-all group">
-            <div className="w-11 h-11 bg-orange-500/10 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+          <Link href="/track" className="glass-card p-4 flex items-center gap-3 bg-gradient-to-br from-[#0E9F6E]/10 to-transparent border-[#0E9F6E]/20 hover:border-[#0E9F6E]/40 transition-all group">
+            <div className="w-11 h-11 bg-[#0E9F6E]/10 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
               <Bike size={20} className="text-accent animate-float" />
             </div>
             <div>
@@ -505,7 +505,7 @@ export default function HomePage() {
       <div className="max-w-5xl mx-auto px-4 pb-4">
         <div className="glass-sm p-4 text-center">
           <div className="flex items-center justify-center gap-2 mb-2">
-            <div className="w-7 h-7 bg-gradient-to-br from-orange-400 to-orange-600 rounded-xl flex items-center justify-center">
+            <div className="w-7 h-7 bg-gradient-to-br from-[#0E9F6E] to-[#087f58] rounded-xl flex items-center justify-center">
               <Bike size={14} className="text-white" />
             </div>
             <span className="text-sm font-black text-body">NammaOoru <span className="text-accent">Express</span></span>
@@ -536,7 +536,7 @@ export default function HomePage() {
               {item.icon}
               <span className="text-[9px] font-semibold">{item.label}</span>
               {item.badge && item.badge > 0 && (
-                <span className="absolute -top-0.5 right-1 w-4 h-4 bg-orange-500 text-white text-[9px] font-black rounded-full flex items-center justify-center">{item.badge}</span>
+                <span className="absolute -top-0.5 right-1 w-4 h-4 bg-[#0E9F6E] text-white text-[9px] font-black rounded-full flex items-center justify-center">{item.badge}</span>
               )}
             </Link>
           ))}

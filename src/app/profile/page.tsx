@@ -145,7 +145,7 @@ export default function ProfilePage() {
           </Link>
           <h1 className="font-bold text-body flex-1">My Profile</h1>
           <button onClick={() => { setEditMode(!editMode); setDraft({ name: user.displayName || '', phone: user.phone || '', email: user.email || '' }); }}
-            className={`text-xs font-bold transition-colors px-3 py-1.5 rounded-lg border flex items-center gap-1 ${editMode ? 'bg-red-500/10 border-red-500/25 text-red-500 dark:text-red-400' : 'bg-orange-500/10 border-orange-500/25 text-accent'}`}>
+            className={`text-xs font-bold transition-colors px-3 py-1.5 rounded-lg border flex items-center gap-1 ${editMode ? 'bg-red-500/10 border-red-500/25 text-red-500 dark:text-red-400' : 'bg-[#0E9F6E]/10 border-[#0E9F6E]/25 text-accent'}`}>
             {editMode ? 'Cancel' : <><Pencil size={12} /> Edit</>}
           </button>
         </div>
@@ -154,20 +154,20 @@ export default function ProfilePage() {
       <div className="max-w-5xl mx-auto px-4 pt-4 space-y-4">
 
         {/* Profile Card */}
-        <div className="relative overflow-hidden rounded-3xl border p-5 bg-gradient-to-br from-orange-400/10 to-orange-500/4 border-orange-400/20">
+        <div className="relative overflow-hidden rounded-3xl border p-5 bg-gradient-to-br from-[#0E9F6E]/10 to-[#087f58]/4 border-orange-400/20">
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-40 h-0.5 rounded-full bg-gradient-to-r from-transparent via-orange-400/40 to-transparent" />
 
           <div className="flex items-center gap-4">
             {/* Avatar */}
             <div className="relative flex-shrink-0">
-              <div className="w-[72px] h-[72px] rounded-2xl flex items-center justify-center text-2xl font-black border text-accent bg-gradient-to-br from-orange-400/30 to-orange-500/15 border-orange-400/25">
+              <div className="w-[72px] h-[72px] rounded-2xl flex items-center justify-center text-2xl font-black border text-accent bg-gradient-to-br from-[#0E9F6E]/30 to-[#087f58]/15 border-orange-400/25">
                 {user.photoURL ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img src={user.photoURL} alt="avatar" className="w-full h-full rounded-2xl object-cover" />
                 ) : initials}
               </div>
               {editMode && (
-                <button className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full flex items-center justify-center bg-orange-500 text-white">
+                <button className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full flex items-center justify-center bg-[#0E9F6E] text-white">
                   <Camera size={12} />
                 </button>
               )}
@@ -213,7 +213,7 @@ export default function ProfilePage() {
             { label: 'Saved', value: String(favoriteShopIds.length), icon: Heart, href: '/favorites' },
           ].map(s => (
             <Link key={s.label} href={s.href}
-              className="glass-card p-3 text-center transition-all hover:border-orange-400/25">
+              className="glass-card p-3 text-center transition-all hover:border-[#0E9F6E]-400/25">
               <s.icon size={17} className="text-accent mx-auto" />
               <div className="text-sm font-black text-body mt-0.5">{s.value}</div>
               <div className="text-[10px] mt-0.5 text-faint">{s.label}</div>
@@ -225,7 +225,7 @@ export default function ProfilePage() {
         <div className="flex gap-1 p-1 rounded-xl surface">
           {(['menu', 'addresses'] as const).map(tab => (
             <button key={tab} onClick={() => setActiveSection(tab)}
-              className={`flex-1 py-2 rounded-lg text-xs font-bold capitalize transition-all flex items-center justify-center gap-1.5 ${activeSection === tab ? 'bg-orange-500 text-white' : 'text-muted'}`}>
+              className={`flex-1 py-2 rounded-lg text-xs font-bold capitalize transition-all flex items-center justify-center gap-1.5 ${activeSection === tab ? 'bg-[#0E9F6E] text-white' : 'text-muted'}`}>
               {tab === 'menu' ? <><Settings size={12} /> Account</> : <><MapPin size={12} /> Addresses</>}
             </button>
           ))}
@@ -242,7 +242,7 @@ export default function ProfilePage() {
                   </div>
                   <span className="flex-1 text-sm font-semibold text-body">{item.label}</span>
                   {item.badge && (
-                    <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-orange-500/12 text-accent border border-orange-500/20">
+                    <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-[#0E9F6E]/12 text-accent border border-[#0E9F6E]/20">
                       {item.badge}
                     </span>
                   )}
@@ -263,14 +263,14 @@ export default function ProfilePage() {
             {addresses.map(addr => (
               <div key={addr.id} className={`glass-card p-4 ${addr.id === selectedAddressId ? 'border-orange-400/30' : ''}`}>
                 <div className="flex items-start gap-3">
-                  <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 ${addr.id === selectedAddressId ? 'bg-orange-500/12' : 'surface'}`}>
+                  <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 ${addr.id === selectedAddressId ? 'bg-[#0E9F6E]/12' : 'surface'}`}>
                     {addr.label === 'Home' ? <Home size={17} className="text-secondary" /> : addr.label === 'Work' ? <Building2 size={17} className="text-secondary" /> : <MapPin size={17} className="text-secondary" />}
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-0.5">
                       <span className="text-sm font-bold text-body">{addr.label}</span>
                       {addr.id === selectedAddressId && (
-                        <span className="text-[10px] px-2 py-0.5 rounded-full font-bold bg-orange-500/12 text-accent">Default</span>
+                        <span className="text-[10px] px-2 py-0.5 rounded-full font-bold bg-[#0E9F6E]/12 text-accent">Default</span>
                       )}
                     </div>
                     <p className="text-xs text-secondary">{addr.fullAddress}</p>
@@ -293,7 +293,7 @@ export default function ProfilePage() {
                 <div className="flex gap-2">
                   {['Home', 'Work', 'Other'].map(l => (
                     <button key={l} onClick={() => setNewAddress(a => ({ ...a, label: l }))}
-                      className={`px-3 py-1.5 rounded-lg text-xs font-bold border transition-all ${newAddress.label === l ? 'bg-orange-500 text-white border-orange-500' : 'surface text-secondary'}`}>
+                      className={`px-3 py-1.5 rounded-lg text-xs font-bold border transition-all ${newAddress.label === l ? 'bg-[#0E9F6E] text-white border-[#0E9F6E]' : 'surface text-secondary'}`}>
                       {l}
                     </button>
                   ))}
@@ -365,7 +365,7 @@ export default function ProfilePage() {
 
             {!showAddAddress && (
               <button onClick={() => setShowAddAddress(true)}
-                className="w-full rounded-2xl border border-dashed p-4 flex items-center justify-center gap-2 transition-all hover:border-orange-400/30 border-subtle">
+                className="w-full rounded-2xl border border-dashed p-4 flex items-center justify-center gap-2 transition-all hover:border-[#0E9F6E]-400/30 border-subtle">
                 <Plus size={16} className="text-accent" />
                 <span className="text-sm font-bold text-accent">Add New Address</span>
               </button>

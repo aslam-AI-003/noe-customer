@@ -1,11 +1,11 @@
 {
-  "name": "Namma Ooru Express",
-  "short_name": "NOE",
-  "description": "Neenga Sollunga... Naanga Deliver Pannuvom! - Hyperlocal Delivery Platform",
+  "name": "NOX — Namma Ooru Express",
+  "short_name": "NOX",
+  "description": "உங்க ஊரு... உங்க சேவை — Fast, Safe & Trusted Local Delivery",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#0D0D0D",
-  "theme_color": "#FFC107",
+  "background_color": "#111111",
+  "theme_color": "#0E9F6E",
   "orientation": "portrait",
   "scope": "/",
   "icons": [

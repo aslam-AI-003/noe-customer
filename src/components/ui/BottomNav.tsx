@@ -79,24 +79,24 @@ export default function BottomNav() {
               href={item.href}
               className={`relative flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-2xl transition-all duration-200 ${
                 isActive
-                  ? 'text-yellow-400'
+                  ? 'text-[#0E9F6E]'
                   : 'text-white/35 hover:text-white/60'
               }`}
             >
               {/* Active indicator */}
               {isActive && (
-                <span className="absolute -top-1 left-1/2 -translate-x-1/2 w-1 h-1 bg-yellow-400 rounded-full" />
+                <span className="absolute -top-1 left-1/2 -translate-x-1/2 w-1 h-1 bg-[#0E9F6E] rounded-full" />
               )}
 
               <span className="relative">
                 {item.icon(isActive)}
                 {item.badge && cartCount > 0 && (
-                  <span className="absolute -top-1.5 -right-2 min-w-[16px] h-4 bg-yellow-400 text-black text-[9px] font-black rounded-full flex items-center justify-center px-0.5">
+                   <span className="absolute -top-1.5 -right-2 min-w-[16px] h-4 bg-[#0E9F6E] text-white text-[9px] font-black rounded-full flex items-center justify-center px-0.5">
                     {cartCount > 9 ? '9+' : cartCount}
                   </span>
                 )}
               </span>
-              <span className={`text-[10px] font-semibold tracking-wide ${isActive ? 'text-yellow-400' : ''}`}>
+              <span className={`text-[10px] font-semibold tracking-wide ${isActive ? 'text-[#0E9F6E]' : ''}`}>
                 {item.label}
               </span>
             </Link>

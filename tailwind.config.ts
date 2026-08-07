@@ -11,16 +11,16 @@ const config: Config = {
     extend: {
       colors: {
         primary: {
-          50: '#FFF9E6',
-          100: '#FFF0B3',
-          200: '#FFE680',
-          300: '#FFDB4D',
-          400: '#FFD11A',
-          500: '#FFC107', // Main Yellow
-          600: '#E6AC00',
-          700: '#CC9900',
-          800: '#B38600',
-          900: '#806000',
+          50: '#ECFDF5',
+          100: '#D1FAE5',
+          200: '#A7F3D0',
+          300: '#6EE7B7',
+          400: '#34D399',
+          500: '#0E9F6E', // Main NOX Green
+          600: '#087f58',
+          700: '#065f44',
+          800: '#064e3b',
+          900: '#043d2e',
         },
         dark: {
           50: '#3A3A3A',
@@ -28,17 +28,24 @@ const config: Config = {
           200: '#2D2D2D',
           300: '#262626',
           400: '#202020',
-          500: '#1A1A1A', // Main Dark
-          600: '#141414',
-          700: '#0D0D0D',
+          500: '#111111', // Main NOX Dark
+          600: '#0f0f0f',
+          700: '#0a0a0a',
           800: '#070707',
           900: '#000000',
         },
         accent: {
-          orange: '#FF6B35',
-          green: '#28A745',
+          orange: '#0E9F6E',
+          green: '#0E9F6E',
+          gold: '#C9A227',
           red: '#DC3545',
           blue: '#007BFF',
+        },
+        nox: {
+          green: '#0E9F6E',
+          dark: '#111111',
+          gold: '#C9A227',
+          light: '#F8F8F8',
         },
       },
       fontFamily: {
@@ -75,8 +82,8 @@ const config: Config = {
           '50%': { transform: 'translateY(-5px)' },
         },
         pulseGlow: {
-          '0%, 100%': { boxShadow: '0 0 5px rgba(255, 193, 7, 0.3)' },
-          '50%': { boxShadow: '0 0 20px rgba(255, 193, 7, 0.6)' },
+          '0%, 100%': { boxShadow: '0 0 5px rgba(14, 159, 110, 0.3)' },
+          '50%': { boxShadow: '0 0 20px rgba(14, 159, 110, 0.6)' },
         },
       },
       backdropBlur: {

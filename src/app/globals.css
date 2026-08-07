@@ -3,17 +3,18 @@
 @tailwind utilities;
 
 /* ============================================
-   NAMMAOORU EXPRESS — PREMIUM LIGHT UI
+   NOX — NAMMA OORU EXPRESS • DELIVERY
+   Brand: #0E9F6E (green), #111111 (dark), #C9A227 (gold)
    ============================================ */
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 
 /* ━━━━ LIGHT THEME (default) ━━━━ */
 :root, .light {
-  --yellow: #F59E0B;
-  --yellow-dark: #D97706;
-  --orange: #F97316;
-  --orange-dark: #EA580C;
+  --yellow: #0E9F6E;
+  --yellow-dark: #087f58;
+  --orange: #0E9F6E;
+  --orange-dark: #087f58;
   --bg: #FFFFFF;
   --bg2: #FAFAF9;
   --bg3: #F3F4F6;
@@ -31,8 +32,8 @@
   --header-border: rgba(17,24,39,0.06);
   --input-bg: #F4F4F5;
   --input-border: rgba(17,24,39,0.09);
-  --input-focus-border: rgba(249,115,22,0.5);
-  --input-focus-ring: rgba(249,115,22,0.12);
+  --input-focus-border: rgba(14,159,110,0.5);
+  --input-focus-ring: rgba(14,159,110,0.12);
   --btn-secondary-bg: #F4F4F5;
   --btn-secondary-border: rgba(17,24,39,0.08);
   --btn-secondary-color: #27272A;
@@ -45,7 +46,7 @@
   --skeleton-from: rgba(17,24,39,0.04);
   --skeleton-mid: rgba(17,24,39,0.09);
   --divider: rgba(17,24,39,0.07);
-  --scrollbar-thumb: rgba(249,115,22,0.35);
+  --scrollbar-thumb: rgba(14,159,110,0.35);
   --shadow-color: rgba(17,24,39,0.08);
   --shadow-sm: 0 1px 2px rgba(17,24,39,0.04), 0 1px 6px rgba(17,24,39,0.04);
   --shadow-md: 0 6px 20px rgba(17,24,39,0.07), 0 1px 3px rgba(17,24,39,0.05);
@@ -57,10 +58,10 @@
 
 /* ━━━━ DARK THEME (secondary, via toggle) ━━━━ */
 .dark {
-  --yellow: #FBBF24;
-  --yellow-dark: #F59E0B;
-  --orange: #FB923C;
-  --orange-dark: #F97316;
+  --yellow: #34D399;
+  --yellow-dark: #0E9F6E;
+  --orange: #34D399;
+  --orange-dark: #0E9F6E;
   --bg: #0B0B0D;
   --bg2: #111114;
   --bg3: #17171B;
@@ -78,8 +79,8 @@
   --header-border: rgba(255,255,255,0.07);
   --input-bg: rgba(255,255,255,0.05);
   --input-border: rgba(255,255,255,0.09);
-  --input-focus-border: rgba(251,191,36,0.4);
-  --input-focus-ring: rgba(251,191,36,0.1);
+  --input-focus-border: rgba(14,159,110,0.4);
+  --input-focus-ring: rgba(14,159,110,0.1);
   --btn-secondary-bg: rgba(255,255,255,0.07);
   --btn-secondary-border: rgba(255,255,255,0.11);
   --btn-secondary-color: rgba(255,255,255,0.85);
@@ -92,7 +93,7 @@
   --skeleton-from: rgba(255,255,255,0.05);
   --skeleton-mid: rgba(255,255,255,0.1);
   --divider: rgba(255,255,255,0.08);
-  --scrollbar-thumb: rgba(251,191,36,0.35);
+  --scrollbar-thumb: rgba(14,159,110,0.35);
   --shadow-color: rgba(0,0,0,0.5);
   --shadow-sm: 0 1px 2px rgba(0,0,0,0.3);
   --shadow-md: 0 8px 24px rgba(0,0,0,0.4);
@@ -165,7 +166,7 @@ body {
   cursor: pointer;
 }
 .glass-card-hover:hover {
-  border-color: rgba(249,115,22,0.25);
+  border-color: rgba(14,159,110,0.25);
   transform: translateY(-3px);
   box-shadow: var(--shadow-lg);
 }
@@ -204,7 +205,7 @@ body {
   color: var(--text-secondary);
   transition: color 0.2s;
 }
-.nav-link:hover { color: var(--orange); }
+.nav-link:hover { color: #0E9F6E; }
 
 /* ============================================
    HEADER
@@ -225,7 +226,7 @@ body {
   justify-content: center;
   gap: 8px;
   padding: 12px 24px;
-  background: linear-gradient(135deg, #FB923C, #F97316);
+  background: linear-gradient(135deg, #0E9F6E, #087f58);
   color: #fff;
   font-weight: 800;
   font-size: 14px;
@@ -233,13 +234,13 @@ body {
   border: none;
   cursor: pointer;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 6px 18px rgba(249,115,22,0.28);
+  box-shadow: 0 6px 18px rgba(14,159,110,0.28);
   white-space: nowrap;
 }
 .btn-primary:hover {
   transform: translateY(-1px);
-  box-shadow: 0 10px 26px rgba(249,115,22,0.36);
-  background: linear-gradient(135deg, #FDBA74, #FB923C);
+  box-shadow: 0 10px 26px rgba(14,159,110,0.36);
+  background: linear-gradient(135deg, #34D399, #0E9F6E);
 }
 .btn-primary:active { transform: scale(0.97); }
 
@@ -261,7 +262,7 @@ body {
 }
 .btn-secondary:hover {
   background: var(--card-hover);
-  border-color: rgba(249,115,22,0.3);
+  border-color: rgba(14,159,110,0.3);
 }
 
 .btn-icon {
@@ -281,7 +282,7 @@ body {
 .btn-icon:hover {
   background: var(--card-hover);
   color: var(--text-primary);
-  border-color: rgba(249,115,22,0.25);
+  border-color: rgba(14,159,110,0.25);
 }
 
 /* ============================================
@@ -372,8 +373,8 @@ body {
   display: flex;
   align-items: center;
   gap: 0;
-  background: rgba(249,115,22,0.08);
-  border: 1px solid rgba(249,115,22,0.28);
+  background: rgba(14,159,110,0.08);
+  border: 1px solid rgba(14,159,110,0.28);
   border-radius: 10px;
   overflow: hidden;
 }
@@ -391,7 +392,7 @@ body {
   background: transparent;
   border: none;
 }
-.qty-btn:hover { background: rgba(249,115,22,0.15); }
+.qty-btn:hover { background: rgba(14,159,110,0.15); }
 .qty-value {
   min-width: 28px;
   text-align: center;
@@ -477,11 +478,11 @@ body {
   left: 10px;
   padding: 3px 8px;
   background: rgba(255,255,255,0.92);
-  border: 1px solid rgba(249,115,22,0.3);
+  border: 1px solid rgba(14,159,110,0.3);
   border-radius: 8px;
   font-size: 10px;
   font-weight: 800;
-  color: var(--orange-dark);
+  color: #087f58;
   backdrop-filter: blur(6px);
 }
 .dark .floating-badge {
@@ -500,8 +501,8 @@ body {
 /* ============================================
    GLOW EFFECTS
    ============================================ */
-.glow-yellow { box-shadow: 0 0 30px rgba(249,115,22,0.25); }
-.glow-yellow-sm { box-shadow: 0 0 15px rgba(249,115,22,0.18); }
+.glow-yellow { box-shadow: 0 0 30px rgba(14,159,110,0.25); }
+.glow-yellow-sm { box-shadow: 0 0 15px rgba(14,159,110,0.18); }
 
 /* ============================================
    ANIMATIONS
@@ -532,8 +533,8 @@ body {
 }
 
 @keyframes pulse-glow {
-  0%, 100% { box-shadow: 0 0 20px rgba(249,115,22,0.18); }
-  50% { box-shadow: 0 0 40px rgba(249,115,22,0.38); }
+  0%, 100% { box-shadow: 0 0 20px rgba(14,159,110,0.18); }
+  50% { box-shadow: 0 0 40px rgba(14,159,110,0.38); }
 }
 
 @keyframes shimmer {
@@ -619,25 +620,25 @@ body {
   color: var(--text-primary);
 }
 .cat-pill.active {
-  background: var(--orange);
+  background: #0E9F6E;
   color: #fff;
-  border-color: var(--orange);
+  border-color: #0E9F6E;
   font-weight: 800;
-  box-shadow: 0 4px 15px rgba(249,115,22,0.32);
+  box-shadow: 0 4px 15px rgba(14,159,110,0.32);
 }
 
 /* ============================================
    HERO GRADIENT TEXT
    ============================================ */
 .gradient-text {
-  background: linear-gradient(135deg, #F59E0B 0%, #F97316 50%, #EF4444 100%);
+  background: linear-gradient(135deg, #0E9F6E 0%, #087f58 50%, #065f44 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
 .gradient-text-yellow {
-  background: linear-gradient(135deg, #FBBF24, #F97316);
+  background: linear-gradient(135deg, #34D399, #0E9F6E);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -647,7 +648,7 @@ body {
    ANIMATED GRADIENT BG
    ============================================ */
 .animated-gradient {
-  background: linear-gradient(-45deg, #FBBF24, #F97316, #EF4444, #8B5CF6);
+  background: linear-gradient(-45deg, #0E9F6E, #087f58, #065f44, #0d4f3c);
   background-size: 400% 400%;
   animation: gradient-shift 8s ease infinite;
 }
@@ -695,7 +696,7 @@ body {
 /* ============================================
    STAR RATING
    ============================================ */
-.star-filled { color: var(--yellow); }
+.star-filled { color: #C9A227; }
 .star-empty { color: var(--card-border); }
 
 /* ============================================
@@ -722,12 +723,12 @@ body {
   filter: blur(80px);
   pointer-events: none;
 }
-.orb-yellow { background: rgba(245,158,11,0.14); }
-.orb-orange { background: rgba(249,115,22,0.1); }
+.orb-yellow { background: rgba(14,159,110,0.14); }
+.orb-orange { background: rgba(14,159,110,0.1); }
 .orb-purple { background: rgba(139,92,246,0.07); }
 
-.dark .orb-yellow { background: rgba(251,191,36,0.12); }
-.dark .orb-orange { background: rgba(249,115,22,0.08); }
+.dark .orb-yellow { background: rgba(14,159,110,0.12); }
+.dark .orb-orange { background: rgba(14,159,110,0.08); }
 .dark .orb-purple { background: rgba(139,92,246,0.06); }
 
 /* ============================================

@@ -61,7 +61,7 @@ function ReviewsSection({ shopId, shopRating, shopTotalRatings }: { shopId: stri
         <div key={r.id} className="glass-sm p-4">
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-orange-500/15 rounded-full flex items-center justify-center text-sm font-bold text-accent">
+              <div className="w-8 h-8 bg-[#0E9F6E]/15 rounded-full flex items-center justify-center text-sm font-bold text-accent">
                 {r.customerName[0]}
               </div>
               <span className="text-sm font-semibold text-body">{r.customerName}</span>
@@ -75,7 +75,7 @@ function ReviewsSection({ shopId, shopRating, shopTotalRatings }: { shopId: stri
           {'tags' in r && (r as any).tags?.length > 0 && (
             <div className="flex flex-wrap gap-1 mt-2">
               {(r as any).tags.map((tag: string) => (
-                <span key={tag} className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-orange-500/8 text-accent border border-orange-500/15">
+                <span key={tag} className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#0E9F6E]/8 text-accent border border-[#0E9F6E]/15">
                   {tag}
                 </span>
               ))}
@@ -209,12 +209,12 @@ export default function ShopDetailPage() {
             <p className="text-xs text-faint truncate">{shop.address.full}</p>
           </div>
           <button onClick={() => toggleFavorite(id)}
-            className={`btn-icon flex-shrink-0 ${isFav ? 'bg-orange-500/15 border-orange-500/30' : ''}`}>
+            className={`btn-icon flex-shrink-0 ${isFav ? 'bg-[#0E9F6E]/15 border-[#0E9F6E]/30' : ''}`}>
             <Heart size={18} fill={isFav ? '#FB923C' : 'none'} stroke={isFav ? '#FB923C' : 'currentColor'} />
           </button>
           <Link href="/cart" className="relative btn-icon flex-shrink-0">
             <ShoppingCart size={18} />
-            {cartItems.length > 0 && <span className="absolute -top-1 -right-1 w-4 h-4 bg-orange-500 text-white text-[9px] font-black rounded-full flex items-center justify-center">{cartItems.reduce((s, i) => s + i.quantity, 0)}</span>}
+            {cartItems.length > 0 && <span className="absolute -top-1 -right-1 w-4 h-4 bg-[#0E9F6E] text-white text-[9px] font-black rounded-full flex items-center justify-center">{cartItems.reduce((s, i) => s + i.quantity, 0)}</span>}
           </Link>
         </div>
       </header>
@@ -271,7 +271,7 @@ export default function ShopDetailPage() {
             { id: 'reviews', label: 'Reviews', icon: Star },
           ].map(tab => (
             <button key={tab.id} onClick={() => setActiveTab(tab.id)}
-              className={`flex-1 py-2.5 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${activeTab === tab.id ? 'bg-orange-500 text-white' : 'text-muted hover:text-secondary'}`}>
+              className={`flex-1 py-2.5 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${activeTab === tab.id ? 'bg-[#0E9F6E] text-white' : 'text-muted hover:text-secondary'}`}>
               <tab.icon size={13} /> {tab.label}
             </button>
           ))}
@@ -347,7 +347,7 @@ export default function ShopDetailPage() {
                           <button onClick={() => {
                             addToCart({ productId: product.id, shopId: product.shopId, name: product.name, nameTamil: product.nameTamil, price: product.price, discountPrice: product.discountPrice, quantity: 1, unit: product.unit, isVeg: product.isVeg });
                             toast.success('Added to cart!');
-                          }} className="px-4 py-1.5 bg-orange-500/10 border border-orange-500/30 text-accent text-xs font-black rounded-lg hover:bg-orange-500/15 active:scale-95 transition-all">
+                          }} className="px-4 py-1.5 bg-[#0E9F6E]/10 border border-[#0E9F6E]/30 text-accent text-xs font-black rounded-lg hover:bg-[#0E9F6E]/15 active:scale-95 transition-all">
                             ADD
                           </button>
                         )}
@@ -371,7 +371,7 @@ export default function ShopDetailPage() {
               { icon: Zap, label: 'Avg Prep Time', value: `${shop.avgPrepTime} minutes` },
             ].map(item => (
               <div key={item.label} className="glass-sm p-4 flex items-center gap-3">
-                <div className="w-10 h-10 bg-orange-500/8 rounded-xl flex items-center justify-center flex-shrink-0">
+                <div className="w-10 h-10 bg-[#0E9F6E]/8 rounded-xl flex items-center justify-center flex-shrink-0">
                   <item.icon size={16} className="text-accent" />
                 </div>
                 <div>

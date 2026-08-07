@@ -177,7 +177,7 @@ export default function LoginPage() {
         )}
         
         {/* Logo */}
-        <div className="w-20 h-20 bg-gradient-to-br from-amber-400 via-orange-500 to-red-500 rounded-3xl flex items-center justify-center mx-auto mb-5 shadow-2xl shadow-orange-500/30 rotate-3">
+        <div className="w-20 h-20 bg-gradient-to-br from-[#0E9F6E] via-orange-500 to-red-500 rounded-3xl flex items-center justify-center mx-auto mb-5 shadow-2xl shadow-orange-500/30 rotate-3">
           <span className="text-3xl font-black text-white -rotate-3">NOE</span>
         </div>
         <h1 className="text-2xl font-black text-body">NammaOoru Express</h1>
@@ -265,7 +265,7 @@ export default function LoginPage() {
                     value={digit}
                     onChange={e => handleOtpInput(i, e.target.value)}
                     onKeyDown={e => handleOtpKeyDown(i, e)}
-                    className="w-14 h-14 text-center text-2xl font-black rounded-xl border-2 border-subtle bg-[var(--card-bg)] text-body focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 outline-none transition-all"
+                    className="w-14 h-14 text-center text-2xl font-black rounded-xl border-2 border-subtle bg-[var(--card-bg)] text-body focus:border-[#0E9F6E] focus:ring-2 focus:ring-orange-500/20 outline-none transition-all"
                     maxLength={1}
                   />
                 ))}

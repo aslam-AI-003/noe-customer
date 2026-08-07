@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { Bike, ShoppingCart, UserRound, Menu, X, Home, Store, MapPin, Info, Mic } from 'lucide-react';
+import { MapPin, ShoppingCart, UserRound, Menu, X, Home, Store, Info, Mic, Bike } from 'lucide-react';
 import { useStore } from '@/store/useStore';
 import AreaSelector from '@/components/ui/AreaSelector';
 import VoiceOrderButton from '@/components/ui/VoiceOrderButton';
@@ -18,14 +18,14 @@ export default function Header() {
         <div className="flex items-center justify-between h-16 md:h-20">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-3">
-            <div className="w-10 h-10 md:w-12 md:h-12 bg-gradient-to-br from-amber-400 to-orange-500 rounded-xl flex items-center justify-center shadow-md">
-              <Bike size={20} className="text-white" />
+            <div className="w-10 h-10 md:w-12 md:h-12 bg-gradient-to-br from-[#0E9F6E] to-[#087f58] rounded-xl flex items-center justify-center shadow-md">
+              <MapPin size={20} className="text-white" />
             </div>
             <div className="hidden sm:block">
-              <h1 className="text-lg md:text-xl font-bold font-display text-body">
-                Namma Ooru <span className="text-accent">Express</span>
+              <h1 className="text-lg md:text-xl font-black font-display text-body">
+                N<span className="text-[#0E9F6E]">O</span>X
               </h1>
-              <p className="text-xs text-faint -mt-0.5">Fast • Safe • Trusted</p>
+              <p className="text-[10px] text-faint -mt-0.5 uppercase tracking-wider">Namma Ooru Express</p>
             </div>
           </Link>
 
@@ -64,7 +64,7 @@ export default function Header() {
             <Link href="/cart" className="relative p-2 rounded-xl hover:bg-[var(--card-hover)] transition-colors">
               <ShoppingCart size={22} className="text-secondary" />
               {cart.length > 0 && (
-                <span className="absolute -top-1 -right-1 w-5 h-5 bg-orange-500 text-white text-xs font-bold rounded-full flex items-center justify-center">
+                <span className="absolute -top-1 -right-1 w-5 h-5 bg-[#0E9F6E] text-white text-xs font-bold rounded-full flex items-center justify-center">
                   {cart.length}
                 </span>
               )}
@@ -72,7 +72,7 @@ export default function Header() {
 
             {/* Auth Button */}
             {isAuthenticated ? (
-              <Link href="/profile" className="w-9 h-9 bg-orange-500/15 rounded-xl flex items-center justify-center">
+              <Link href="/profile" className="w-9 h-9 bg-[#0E9F6E]/15 rounded-xl flex items-center justify-center">
                 <UserRound size={18} className="text-accent" />
               </Link>
             ) : (

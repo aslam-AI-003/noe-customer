@@ -145,7 +145,7 @@ function ShopsContent() {
             {([['rating', 'Rating'], ['time', 'Fastest'], ['orders', 'Popular']] as const).map(([val, label]) => (
               <button key={val} onClick={() => setSortBy(val)}
                 className={`px-3 py-1.5 rounded-lg text-[11px] font-semibold transition-all ${
-                  sortBy === val ? 'bg-orange-500/12 text-accent border border-orange-500/30' : 'text-faint hover:text-secondary'
+                  sortBy === val ? 'bg-[#0E9F6E]/12 text-accent border border-[#0E9F6E]/30' : 'text-faint hover:text-secondary'
                 }`}>
                 {label}
               </button>
@@ -193,7 +193,7 @@ function ShopsContent() {
                     <p className="text-[10px] text-faint mt-1.5">Min. order ₹{shop.minOrderAmount}</p>
                   )}
                   <Link href={`/shops/${shop.id}`}
-                    className="mt-3 w-full flex items-center justify-center gap-1.5 py-2.5 bg-orange-500/10 border border-orange-500/25 text-accent text-xs font-bold rounded-xl hover:bg-orange-500/15 transition-colors">
+                    className="mt-3 w-full flex items-center justify-center gap-1.5 py-2.5 bg-[#0E9F6E]/10 border border-[#0E9F6E]/25 text-accent text-xs font-bold rounded-xl hover:bg-[#0E9F6E]/15 transition-colors">
                     View Menu →
                   </Link>
                 </div>
