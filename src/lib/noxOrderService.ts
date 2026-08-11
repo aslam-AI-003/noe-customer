@@ -44,6 +44,7 @@ export async function placeOrder(input: CreateNoxOrderInput): Promise<NoxOrder |
     // IDs
     orderId,
     shopId: input.shopId,
+    vendorId: input.shopId, // Duplicate for vendor query matching
     shopCode: input.shopCode,
     customerId: input.customerId,
     riderId: null,

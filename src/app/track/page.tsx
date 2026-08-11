@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, Suspense } from 'react';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
 import { useSearchParams } from 'next/navigation';
@@ -31,7 +31,7 @@ const STATUS_STEPS = [
   { key: 'delivered', label: 'Delivered', icon: CheckCircle2, color: 'text-emerald-500' },
 ];
 
-export default function TrackOrderPage() {
+function TrackOrderContent() {
   const { user } = useStore();
   const searchParams = useSearchParams();
   const orderId = searchParams.get('orderId');
@@ -318,5 +318,14 @@ export default function TrackOrderPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+// Wrap in Suspense for Next.js 14 useSearchParams compatibility
+export default function TrackOrderPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen app-bg animate-pulse" />}>
+      <TrackOrderContent />
+    </Suspense>
   );
 }

@@ -46,6 +46,7 @@ export interface NoxOrder {
   // ─── IDs ───
   orderId: string;           // NOX-SRV-20260807-2045-001
   shopId: string;            // NOX-SRV-TJ-001
+  vendorId?: string;         // Vendor Firestore doc ID (for query matching)
   shopCode: string;          // SRV (3-letter code for quick reference)
   customerId: string;        // NOX-C-9876543210-TJ
   riderId: string | null;    // NOX-R-Muthu-TJ-001 (null until assigned)
