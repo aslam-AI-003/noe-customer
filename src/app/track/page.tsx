@@ -46,9 +46,7 @@ export default function TrackOrderPage() {
 
   // Real-time listener — use NOX trackOrder if orderId is a NOX ID, else fallback
   useEffect(() => {
-    if (!user?.uid) { setLoading(false); return; }
-
-    // If we have a specific NOX orderId from checkout redirect, track it
+    // If we have a specific NOX orderId from URL, track it (no auth needed)
     if (orderId && orderId.startsWith('NOX-')) {
       const unsubscribe = trackOrder(orderId, (noxOrder) => {
         if (noxOrder) {
@@ -82,10 +80,11 @@ export default function TrackOrderPage() {
       return () => unsubscribe();
     }
 
-    // Fallback: listen to all orders (old system)
+    // Fallback: listen to all orders (old system) — requires auth
+    if (!user?.uid) { setLoading(false); return; }
     const unsubscribe = orderService.onAll((liveOrders) => {
       const myActiveOrders = liveOrders.filter((o: any) =>
-        o.userId === user.uid && !['delivered', 'cancelled'].includes(o.status)
+        o.userId === user?.uid && !['delivered', 'cancelled'].includes(o.status)
       );
       setTrackingOrder(myActiveOrders[0] || null);
       setLoading(false);
