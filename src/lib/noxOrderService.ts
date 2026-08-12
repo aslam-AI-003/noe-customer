@@ -38,7 +38,8 @@ export async function placeOrder(input: CreateNoxOrderInput): Promise<NoxOrder |
   
   // Generate unique NOX Order ID
   const orderId = await generateOrderId(input.shopCode);
-  const deliveryOTP = generateDeliveryOTP();
+  // NOTE: deliveryOTP is NOT generated at order time.
+  // It will be generated when vendor marks the order as "ready" for pickup.
   
   const order: NoxOrder = {
     // IDs
@@ -82,8 +83,8 @@ export async function placeOrder(input: CreateNoxOrderInput): Promise<NoxOrder |
     paymentStatus: input.paymentMethod === 'COD' ? 'pending' : 'pending',
     paymentId: null,
 
-    // Delivery
-    deliveryOTP,
+    // Delivery — OTP is generated later when vendor marks "ready"
+    deliveryOTP: '',
     deliveryAddress: input.deliveryAddress,
     deliveryLandmark: input.deliveryLandmark,
     customerLocation: input.customerLocation,

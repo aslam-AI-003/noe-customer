@@ -234,8 +234,8 @@ function TrackOrderContent() {
           </div>
         )}
 
-        {/* ━━━ DELIVERY OTP (Show when rider is on the way) ━━━ */}
-        {trackingOrder.deliveryOtp && ['picked_up', 'on_the_way'].includes(trackingOrder.status) && (
+        {/* ━━━ DELIVERY OTP (Show when vendor marks ready — customer shares with rider at delivery) ━━━ */}
+        {trackingOrder.deliveryOtp && ['ready', 'rider_assigned', 'picked_up', 'on_the_way'].includes(trackingOrder.status) && (
           <div className="glass-card p-5 border-2 border-[#0E9F6E]/30 bg-gradient-to-br from-orange-500/5 to-amber-500/5">
             <div className="text-center">
               <p className="text-xs font-bold text-muted uppercase tracking-wider mb-2">🔐 Delivery OTP</p>
