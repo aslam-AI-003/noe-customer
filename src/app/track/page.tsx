@@ -213,15 +213,19 @@ function TrackOrderContent() {
           </div>
         </div>
 
-        {/* Rider Info (if assigned) */}
-        {trackingOrder.riderName && showRider && (
+        {/* Rider Info (if assigned — even during preparation, since rider travels in parallel) */}
+        {trackingOrder.riderName && (
           <div className="glass-card p-4 flex items-center gap-3">
             <div className="w-11 h-11 bg-purple-500/10 rounded-full flex items-center justify-center">
               <Bike size={18} className="text-purple-600 dark:text-purple-400" />
             </div>
             <div className="flex-1">
               <p className="text-sm font-bold text-body">{trackingOrder.riderName}</p>
-              <p className="text-[10px] text-faint">Your delivery partner</p>
+              <p className="text-[10px] text-faint">
+                {['accepted', 'preparing'].includes(trackingOrder.status) 
+                  ? '🛵 Heading to shop (food being prepared)'
+                  : 'Your delivery partner'}
+              </p>
             </div>
             <div className="flex gap-2">
               <a href={`tel:+91${trackingOrder.riderPhone || '9876543210'}`} className="w-9 h-9 bg-emerald-500/10 rounded-full flex items-center justify-center">
