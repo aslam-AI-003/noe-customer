@@ -11,6 +11,7 @@ import {
 import { useStore } from '@/store/useStore';
 import { rateOrder, cancelOrder, addNotification } from '@/lib/firebaseService';
 import { orderService } from '@/lib/firestoreService';
+import { listenCustomerOrders } from '@/lib/noxOrderService';
 import type { Order } from '@/lib/firebaseService';
 import toast from 'react-hot-toast';
 
@@ -131,12 +132,60 @@ export default function OrdersPage() {
 
   useEffect(() => { setMounted(true); }, []);
 
-  // Real-time Firestore order listener
+  // Real-time Firestore order listener (NOX orders + old orders)
   useEffect(() => {
     if (!user?.uid) return;
-    const unsubscribe = orderService.onAll((liveOrders) => {
-      // Filter orders for this user
-      const myOrders: Order[] = liveOrders
+
+    let noxOrders: Order[] = [];
+    let oldOrders: Order[] = [];
+
+    const mergeOrders = () => {
+      // Combine NOX + old orders, deduplicate by id
+      const combined = [...noxOrders, ...oldOrders];
+      const seen = new Set<string>();
+      const unique = combined.filter(o => {
+        if (seen.has(o.id!)) return false;
+        seen.add(o.id!);
+        return true;
+      });
+      // Sort by createdAt descending
+      unique.sort((a, b) => {
+        const ta = a.createdAt ? (typeof a.createdAt === 'string' ? new Date(a.createdAt).getTime() : a.createdAt?.seconds * 1000) : 0;
+        const tb = b.createdAt ? (typeof b.createdAt === 'string' ? new Date(b.createdAt).getTime() : b.createdAt?.seconds * 1000) : 0;
+        return tb - ta;
+      });
+      setFirestoreOrders(unique);
+    };
+
+    // Listen to NOX orders (noxOrders collection where customerId == user.uid)
+    const unsubNox = listenCustomerOrders(user.uid, (nox) => {
+      noxOrders = nox.map((d: any) => ({
+        id: d.orderId,
+        userId: d.customerId,
+        shopId: d.shopId || d.vendorId,
+        shopName: d.shopName,
+        shopIcon: '/images/shops/shop-1.jpg',
+        items: (d.items || []).map((i: any) => ({ name: i.name, quantity: i.quantity, price: i.price, discountPrice: i.price })),
+        subtotal: d.total - (d.deliveryCharge || 0),
+        deliveryCharge: d.deliveryCharge || 0,
+        total: d.total || 0,
+        status: (d.status === 'placed' ? 'new' : d.status === 'picked_up' || d.status === 'on_the_way' ? 'in_transit' : d.status) as Order['status'],
+        paymentMethod: d.paymentMethod || 'cod',
+        address: { id: '', label: 'Delivery', fullAddress: d.deliveryAddress || '', lat: 0, lng: 0, pincode: '', city: '' } as any,
+        notes: '',
+        riderId: d.riderId,
+        riderName: d.riderName,
+        rating: d.rating,
+        review: d.review,
+        createdAt: d.createdAt,
+        updatedAt: d.updatedAt,
+      }));
+      mergeOrders();
+    });
+
+    // Also listen to old-format orders (backward compat)
+    const unsubOld = orderService.onAll((liveOrders) => {
+      oldOrders = liveOrders
         .filter((o: any) => o.userId === user.uid)
         .map((d: any) => ({
           id: d.id,
@@ -159,9 +208,10 @@ export default function OrdersPage() {
           createdAt: d.createdAt,
           updatedAt: d.updatedAt,
         }));
-      setFirestoreOrders(myOrders);
+      mergeOrders();
     });
-    return () => unsubscribe();
+
+    return () => { unsubNox(); unsubOld(); };
   }, [user?.uid]);
 
   // Use Firestore orders as primary source
