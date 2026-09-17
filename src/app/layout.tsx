@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next';
 import './globals.css';
 import { Toaster } from 'react-hot-toast';
 import { ThemeScript } from '@/components/ThemeScript';
+import AuthStateListener from '@/components/AuthStateListener';
 
 export const metadata: Metadata = {
   title: 'NOX — Namma Ooru Express Delivery',
@@ -31,6 +32,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <ThemeScript />
       </head>
       <body className="bg-white text-[#16181D] antialiased transition-colors duration-300">
+        <AuthStateListener />
         {children}
         <Toaster
           position="top-center"
